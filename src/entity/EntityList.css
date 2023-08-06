@@ -1,0 +1,18 @@
+.main {
+  padding: 14px;
+  width: 360px;
+}
+
+.entities {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 15px;
+}
+
+.entity {
+  border: 1px solid #000000;
+  border-radius: 5px;
+  padding: 11px 12px;
+  background-color: #29262D;
+}

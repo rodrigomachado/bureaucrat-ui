@@ -1,0 +1,8 @@
+.main {
+  width: 80%;
+  background-color: #1F1B23;
+  margin: 20px auto;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: row;
+}

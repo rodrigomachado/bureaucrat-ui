@@ -1,0 +1,25 @@
+.main {
+  padding: 14px;
+  flex-grow: 1;
+  background-color: #29262D;
+  border-radius: 0 10px 10px 0;
+}
+
+.input {
+  margin-top: 5px;
+  height: 34px;
+  width: 190px;
+}
+
+.fields {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.input {
+  margin-top: 5px;
+  height: 34px;
+  min-width: 190px;
+}
