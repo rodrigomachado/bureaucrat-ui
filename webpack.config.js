@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 const prod = process.env.NODE_ENV === 'production'
 
 const HtmlWebpackPlugin = require('html-webpack-plugin')
@@ -35,6 +37,11 @@ module.exports = {
     ]
   },
   devtool: prod ? undefined : 'source-map',
+  devServer: {
+    proxy: {
+      '/api': process.env.API_URL,
+    },
+  },
   plugins: [
     new HtmlWebpackPlugin({
       template: './src/index.html',
