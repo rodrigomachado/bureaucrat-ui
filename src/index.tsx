@@ -11,7 +11,7 @@ const users = await fetch('/api', {
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({
     query: `{
-      users { id first_name middle_name last_name birth_date }
+      users { id firstName middleName lastName birthDate }
     }`
   }),
 }).then(res => res.json()).then(res => res.data.users)

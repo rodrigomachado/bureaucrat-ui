@@ -7,14 +7,14 @@ import s from './EntityList.css'
 
 type User = {
   id: string,
-  first_name: string,
-  middle_name: string,
-  last_name: string,
-  birth_date: string,
+  firstName: string,
+  middleName: string,
+  lastName: string,
+  birthDate: string,
 }
 
 function userDisplay(user: User) {
-  return `${user.first_name} ${user.last_name}`
+  return `${user.firstName} ${user.lastName}`
 }
 
 type EntityListProps = {
