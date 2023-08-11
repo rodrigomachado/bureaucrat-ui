@@ -10,11 +10,11 @@ type EntitySheetProps = {}
 const EntitySheet = ({ }: EntitySheetProps) => {
   return (
     <div className={s.main}>
-      <Header controls={[
-        <IconButton label="💾" />,
-        <IconButton label="🗑️" />,
-        <IconButton label="⚙️" />,
-      ]} />
+      <Header>
+        <IconButton label="💾" />
+        <IconButton label="🗑️" />
+        <IconButton label="⚙️" />
+      </Header>
       <div className={s.fields}>
         <Field label="First Name" />
         <Field label="Middle Name" />
