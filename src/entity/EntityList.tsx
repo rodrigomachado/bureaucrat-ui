@@ -7,7 +7,7 @@ import IconButton, { Color } from "../layout/IconButton"
 import s from './EntityList.css'
 
 type EntityListProps = {
-  entities: Entity[],
+  entities?: Entity[],
 }
 const EntityList = ({ entities }: EntityListProps) => {
   return (
@@ -17,7 +17,7 @@ const EntityList = ({ entities }: EntityListProps) => {
         <IconButton label="🔎" color={Color.LIGHT} />
       </Header>
       <div className={s.entities}>
-        {entities.map(e => (
+        {entities?.map(e => (
           <div
             key={e.key()}
             className={s.entity}
