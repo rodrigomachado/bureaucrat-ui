@@ -12,6 +12,21 @@ export class ApiError {
   constructor(errors: any[]) {
     this.errors = errors
   }
+
+  toString() {
+    if (!this.errors.length) {
+      return 'ApiError: ---'
+    }
+    if (this.errors.length === 1) {
+      return 'ApiError: ' + errorToString(this.errors[0])
+    }
+    return `ApiError: ${this.errors.map(errorToString).join(' :: ')}`
+  }
+}
+
+function errorToString(error: any): string {
+  if (error.message) return error.message
+  return error.toString()
 }
 
 /**
@@ -61,14 +76,16 @@ export function useApi<S>(
   const [error, setError] = useState<any>(null)
 
   const fnCall = async (signal: AbortSignal) => {
+    setError(null)
+    setLoading(true)
     try {
-      setError(null)
-      setLoading(true)
       setData(await apiFn(signal))
-    } catch (err) {
-      setError(err)
-    } finally {
       setLoading(false)
+      setError(null)
+    } catch (err: any) {
+      if (signal?.aborted) return
+      setLoading(false)
+      setError(err)
     }
   }
 
@@ -78,5 +95,6 @@ export function useApi<S>(
     return () => abort.abort()
   }, [])
 
-  return [data, loading, error, () => fnCall(null as any)]
+  const reload = () => fnCall(null as any)
+  return [data, loading, error, reload]
 }

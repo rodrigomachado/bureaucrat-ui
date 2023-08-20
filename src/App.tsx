@@ -9,15 +9,15 @@ import Paper from "./layout/Paper"
 const api = new Api()
 
 const App = () => {
+  // TODO Change to `const entities = useApi(…)`
   const [
-    // TODO: Handle loading and errors
     users, usersLoading, usersErrors,
   ] = useApi((signal) => api.users({ signal }))
 
   return (
     <Page>
       <Paper>
-        <EntityList entities={users} />
+        <EntityList entities={{ data: users, loading: usersLoading, errors: usersErrors }} />
         <EntitySheet />
       </Paper>
     </Page>
