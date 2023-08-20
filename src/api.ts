@@ -57,7 +57,17 @@ export class Api {
 }
 
 /**
- * Wrapper for an API calls that can be aborted.
+ * Data and data fetching status/utilities.
+ */
+export type ApiData<S> = {
+  data: S | undefined,
+  loading: boolean,
+  error: any,
+  reload: () => void,
+}
+
+/**
+ * Wrapper for a API calls that can be aborted.
  */
 type ApiFn<S> = (signal: AbortSignal) => Promise<S>
 
@@ -70,7 +80,7 @@ type ApiFn<S> = (signal: AbortSignal) => Promise<S>
  */
 export function useApi<S>(
   apiFn: ApiFn<S>,
-): [S | undefined, boolean, any, () => void] {
+): ApiData<S> {
   const [data, setData] = useState<S | undefined>(undefined)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<any>(null)
@@ -79,6 +89,7 @@ export function useApi<S>(
     setError(null)
     setLoading(true)
     try {
+      // TODO: Validate expected data shape
       setData(await apiFn(signal))
       setLoading(false)
       setError(null)
@@ -96,5 +107,5 @@ export function useApi<S>(
   }, [])
 
   const reload = () => fnCall(null as any)
-  return [data, loading, error, reload]
+  return { data, loading, error, reload }
 }

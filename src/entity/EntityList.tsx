@@ -1,14 +1,14 @@
 import React from 'react'
 
 import { Entity } from '.'
+import { ApiData } from '../api'
 import Header from '../layout/Header'
 import IconButton, { Color } from '../layout/IconButton'
 import Loading from '../layout/Loading'
-
 import s from './EntityList.css'
 
 type EntityListProps = {
-  entities: { data?: Entity[], loading: boolean, errors: any },
+  entities: ApiData<Entity[]>,
 }
 const EntityList = ({ entities }: EntityListProps) => {
   return (
@@ -34,17 +34,13 @@ const EntityList = ({ entities }: EntityListProps) => {
 export default EntityList
 
 type LoadErorrProps = {
-  entities: {
-    data?: Entity[],
-    loading: boolean,
-    errors: any,
-  },
+  entities: ApiData<Entity[]>,
   children: (data: Entity[]) => React.ReactNode
 }
-function LoadError({ entities: { data, loading, errors }, children }: LoadErorrProps) {
-  if (errors) return (
+function LoadError({ entities: { data, loading, error }, children }: LoadErorrProps) {
+  if (error) return (
     // TODO Better error UI
-    <div>Error: {'' + errors}</div>
+    <div>Error: {'' + error}</div>
   )
 
   if (loading) return (<Loading />)
