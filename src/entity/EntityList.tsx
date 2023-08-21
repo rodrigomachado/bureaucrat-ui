@@ -1,10 +1,12 @@
-import React from 'react'
+import React, { useContext } from 'react'
 
 import { Entity } from '.'
 import { ApiData } from '../api'
+import { emitError } from '../error'
 import Header from '../layout/Header'
 import IconButton, { Color } from '../layout/IconButton'
 import Loading from '../layout/Loading'
+
 import s from './EntityList.css'
 
 type EntityListProps = {
@@ -17,7 +19,7 @@ const EntityList = ({ entities }: EntityListProps) => {
         <IconButton label="+" color={Color.LIGHT} />
         <IconButton label="🔎" color={Color.LIGHT} />
       </Header>
-      <LoadError entities={entities}>{data => (
+      <LoadedSuccessfully entities={entities}>{data => (
         <div className={s.entities}>
           {data.map(e => (
             <div
@@ -26,22 +28,27 @@ const EntityList = ({ entities }: EntityListProps) => {
             >{e.listData().displayName}</div>
           ))}
         </div>
-      )}</LoadError>
+      )}</LoadedSuccessfully>
     </div>
   )
 }
 
 export default EntityList
 
-type LoadErorrProps = {
+type LoadedSuccessfullyProps = {
   entities: ApiData<Entity[]>,
   children: (data: Entity[]) => React.ReactNode
 }
-function LoadError({ entities: { data, loading, error }, children }: LoadErorrProps) {
-  if (error) return (
-    // TODO Better error UI
-    <div>Error: {'' + error}</div>
-  )
+function LoadedSuccessfully({ entities: { data, loading, error }, children }: LoadedSuccessfullyProps) {
+  emitError(error)
+  if (error) {
+    return (
+      // TODO Offer user the reload option
+      < div > Error: {
+        '' + error
+      }</div >
+    )
+  }
 
   if (loading) return (<Loading />)
 
