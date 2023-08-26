@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useEffect } from "react";
+import React, { createContext, useContext, useEffect } from 'react';
 
-export { default as ErrorDialog } from "./ErrorDialog"
+export { default as ErrorDialog } from './ErrorDialog'
 
 export const ErrorContext = createContext<{
   errors: any[], setErrors: React.Dispatch<React.SetStateAction<any[]>>

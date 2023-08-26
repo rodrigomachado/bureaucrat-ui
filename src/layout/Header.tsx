@@ -1,21 +1,24 @@
-import React from "react"
+import { Typography } from 'antd'
+import { Header as AntHeader } from 'antd/lib/layout/layout'
+import React from 'react'
 
-import Label, { Size } from "./Label"
 import s from './Header.css'
 
 type HeaderProps = {
-  title?: string,
+  title: string,
   children: React.ReactNode,
 }
-const Header = ({ title, children }: HeaderProps) => {
-  return (
-    <div className={s.main}>
-      <div className={s.label}><Label size={Size.Large}>{title}</Label></div>
-      <div className={s.controls}>
-        {children}
-      </div>
+const Header = ({ title, children }: HeaderProps) => (
+  <AntHeader className={s.header}>
+    <div className={s.headerMain}>
+      <Typography.Title className={s.headerTitle}>
+        {title}
+      </Typography.Title>
     </div>
-  )
-}
+    <div className={s.headerButtons}>
+      {children}
+    </div>
+  </AntHeader>
+)
 
 export default Header

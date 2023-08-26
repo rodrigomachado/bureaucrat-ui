@@ -1,37 +1,44 @@
-import React, { useContext } from 'react'
+import { Avatar, Button, List, Skeleton, Space, Tooltip } from 'antd'
+import { Content } from 'antd/lib/layout/layout'
+import { FilterFilled, PlusSquareFilled, UserOutlined } from '@ant-design/icons'
+import React from 'react'
 
 import { Entity } from '.'
 import { ApiData } from '../api'
-import { emitError } from '../error'
 import Header from '../layout/Header'
-import IconButton, { Color } from '../layout/IconButton'
-import Loading from '../layout/Loading'
+import { emitError } from '../error'
 
 import s from './EntityList.css'
 
 type EntityListProps = {
   entities: ApiData<Entity[]>,
 }
-const EntityList = ({ entities }: EntityListProps) => {
-  return (
-    <div className={s.main}>
-      <Header title="Users">
-        <IconButton label="+" color={Color.LIGHT} />
-        <IconButton label="🔎" color={Color.LIGHT} />
-      </Header>
-      <LoadedSuccessfully entities={entities}>{data => (
-        <div className={s.entities}>
-          {data.map(e => (
-            <div
-              key={e.key()}
-              className={s.entity}
-            >{e.listData().displayName}</div>
-          ))}
-        </div>
-      )}</LoadedSuccessfully>
-    </div>
-  )
-}
+const EntityList = ({ entities }: EntityListProps) => (<>
+  <Header title='Users'>
+    <Space.Compact block>
+      <Tooltip title='New'><Button icon={<PlusSquareFilled />} /></Tooltip>
+      <Tooltip title='Search'><Button icon={<FilterFilled />} /></Tooltip>
+    </Space.Compact>
+  </Header>
+  <Content className={s.content}>
+    <LoadedSuccessfully entities={entities}>{data => (
+      <List
+        itemLayout='horizontal'
+        dataSource={entities.data}
+        rowKey={entity => entity.key()}
+        renderItem={entity => {
+          const listData = entity.listData()
+          return (
+            <List.Item> <List.Item.Meta
+              avatar={<Avatar icon={<UserOutlined />} />}
+              title={listData.short}
+              description={listData.long}
+            /> </List.Item>
+          )
+        }} />
+    )}</LoadedSuccessfully>
+  </Content>
+</>)
 
 export default EntityList
 
@@ -50,7 +57,8 @@ function LoadedSuccessfully({ entities: { data, loading, error }, children }: Lo
     )
   }
 
-  if (loading) return (<Loading />)
+  // TODO Make skeleton closer to the result UI
+  if (loading) return (<Skeleton active />)
 
   if (!data) throw new Error('No data available for non-loading, non-error entites')
   return children(data)

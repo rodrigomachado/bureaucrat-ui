@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState } from 'react'
 
-import { User } from "./domainAuthorization";
+import { User } from './domainAuthorization';
 
 /**
  * An error returned by the API.

@@ -1,11 +1,14 @@
-import React, { useState } from "react"
+import { ConfigProvider, Layout, theme } from 'antd'
+import React, { useState } from 'react'
 
-import { Api, useApi } from "./api"
-import EntityList from "./entity/EntityList"
-import EntitySheet from "./entity/EntitySheet"
-import { ErrorContext, ErrorDialog } from "./error"
-import Page from "./layout/Page"
-import Paper from "./layout/Paper"
+import { Api, useApi } from './api'
+import EntityList from './entity/EntityList'
+import EntitySheet from './entity/EntitySheet'
+import { ErrorContext, ErrorDialog } from './error'
+
+import s from './App.css'
+
+const { Sider } = Layout
 
 const api = new Api()
 
@@ -14,15 +17,17 @@ const App = () => {
   const [errors, setErrors] = useState<any[]>([])
 
   return (
-    <Page>
+    <ConfigProvider theme={{ algorithm: theme.darkAlgorithm }}>
       <ErrorContext.Provider value={{ errors, setErrors }}>
-        <Paper>
-          <EntityList entities={entities} />
+        <Layout hasSider className={s.main}>
+          <Sider className={s.sider} width={360}>
+            <EntityList entities={entities} />
+          </Sider>
           <EntitySheet />
-        </Paper>
+        </Layout>
         <ErrorDialog />
       </ErrorContext.Provider>
-    </Page>
+    </ConfigProvider>
   )
 }
 

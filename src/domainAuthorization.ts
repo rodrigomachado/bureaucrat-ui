@@ -1,4 +1,4 @@
-import { Entity, EntityListData } from "./entity"
+import { Entity, EntityListData } from './entity'
 
 export class User implements Entity {
   id: string
@@ -16,12 +16,13 @@ export class User implements Entity {
   }
 
   key(): string {
-    return this.id
+    return this.id.toString()
   }
 
   listData(): EntityListData {
     return {
-      displayName: `${this.firstName} ${this.lastName}`,
+      short: `${this.firstName} ${this.lastName}`,
+      long: `${this.firstName} ${this.middleName} ${this.lastName}`,
     }
   }
 }

@@ -3,5 +3,6 @@ export type Entity = {
   listData: () => EntityListData,
 }
 export type EntityListData = {
-  displayName: string,
+  short: string,
+  long: string,
 }
