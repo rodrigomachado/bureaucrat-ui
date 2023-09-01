@@ -1,20 +1,27 @@
 import React, { useContext } from 'react'
 import { ErrorContext } from '.'
+import { Button, Modal } from 'antd'
 
 const ErrorDialog = () => {
-  const { errors } = useContext(ErrorContext)
-
-  // TODO Report unknown server errors as a dialog
-  return !!errors.length && (
-    <div>
-      This will be a dialog presenting these errors:
+  const { errors, setErrors } = useContext(ErrorContext)
+  const close = () => setErrors([])
+  return (
+    <Modal
+      title="Errors"
+      centered
+      open={!!errors.length}
+      onOk={close}
+      onCancel={close}
+      footer={[<Button key='ok' type='primary' onClick={close} autoFocus>Ok</Button>]}
+      width={1000}
+    >
       <ul>
         {errors.map(e => (
-          // TODO Format error
+          // FEATURE Better error formatting
           <li key={e}>{e.toString()}</li>
         ))}
       </ul>
-    </div>
+    </Modal>
   )
 }
 

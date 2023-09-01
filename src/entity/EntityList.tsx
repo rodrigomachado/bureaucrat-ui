@@ -1,6 +1,6 @@
 import { Avatar, Button, List, Skeleton, Space, Tooltip } from 'antd'
 import { Content } from 'antd/lib/layout/layout'
-import { FilterFilled, PlusSquareFilled, UserOutlined } from '@ant-design/icons'
+import { FilterFilled, PlusSquareFilled, ReloadOutlined, UserOutlined } from '@ant-design/icons'
 import React from 'react'
 
 import { Entity } from '.'
@@ -18,13 +18,14 @@ const EntityList = ({ entities }: EntityListProps) => (<>
     <Space.Compact block>
       <Tooltip title='New'><Button icon={<PlusSquareFilled />} /></Tooltip>
       <Tooltip title='Search'><Button icon={<FilterFilled />} /></Tooltip>
+      <Tooltip title='Reload'><Button icon={<ReloadOutlined />} onClick={entities.reload} /></Tooltip>
     </Space.Compact>
   </Header>
   <Content className={s.content}>
     <LoadedSuccessfully entities={entities}>{data => (
       <List
         itemLayout='horizontal'
-        dataSource={entities.data}
+        dataSource={data}
         rowKey={entity => entity.key()}
         renderItem={entity => {
           const listData = entity.listData()
