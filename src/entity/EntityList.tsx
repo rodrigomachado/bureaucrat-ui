@@ -57,8 +57,19 @@ function LoadedSuccessfully({ entities: { data, loading, error }, children }: Lo
     )
   }
 
-  // TODO Make skeleton closer to the result UI
-  if (loading) return (<Skeleton active />)
+  if (loading) return (
+    <List itemLayout='horizontal'>
+      <List.Item>
+        <Skeleton active avatar={{ shape: 'circle' }} paragraph={false} />
+      </List.Item>
+      <List.Item>
+        <Skeleton active avatar={{ shape: 'circle' }} paragraph={false} />
+      </List.Item>
+      <List.Item>
+        <Skeleton active avatar={{ shape: 'circle' }} paragraph={false} />
+      </List.Item>
+    </List>
+  )
 
   if (!data) throw new Error('No data available for non-loading, non-error entites')
   return children(data)
