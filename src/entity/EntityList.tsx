@@ -51,7 +51,6 @@ function LoadedSuccessfully({ entities: { data, loading, error }, children }: Lo
   emitError(error)
   if (error) {
     return (
-      // TODO Offer user the reload option
       < div > Error: {
         '' + error
       }</div >

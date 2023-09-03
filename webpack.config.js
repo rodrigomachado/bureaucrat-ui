@@ -3,8 +3,6 @@ require('dotenv').config()
 const prod = process.env.NODE_ENV === 'production'
 
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-// TODO MiniCssExtractPlugin, should we use it?
-
 module.exports = {
   mode: prod ? 'production' : 'development',
   entry: './src/index.tsx',

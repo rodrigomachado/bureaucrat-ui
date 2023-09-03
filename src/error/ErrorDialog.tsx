@@ -17,7 +17,6 @@ const ErrorDialog = () => {
     >
       <ul>
         {errors.map(e => (
-          // FEATURE Better error formatting
           <li key={e}>{e.toString()}</li>
         ))}
       </ul>
