@@ -1,3 +1,7 @@
 .content {
   padding: 1em;
 }
+
+.entityItem {
+  cursor: pointer;
+}

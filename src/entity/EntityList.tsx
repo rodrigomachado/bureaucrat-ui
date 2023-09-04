@@ -12,8 +12,9 @@ import s from './EntityList.css'
 
 type EntityListProps = {
   entities: ApiData<Entity[]>,
+  onEntitySelected: (entity: Entity) => void,
 }
-const EntityList = ({ entities }: EntityListProps) => (<>
+const EntityList = ({ entities, onEntitySelected }: EntityListProps) => (<>
   <Header title='Users'>
     <Space.Compact block>
       <Tooltip title='New'><Button icon={<PlusSquareFilled />} /></Tooltip>
@@ -30,11 +31,14 @@ const EntityList = ({ entities }: EntityListProps) => (<>
         renderItem={entity => {
           const listData = entity.listData()
           return (
-            <List.Item> <List.Item.Meta
-              avatar={<Avatar icon={<UserOutlined />} />}
-              title={listData.short}
-              description={listData.long}
-            /> </List.Item>
+            <List.Item onClick={() => onEntitySelected(entity)}>
+              <List.Item.Meta
+                className={s.entityItem}
+                avatar={<Avatar icon={<UserOutlined />} />}
+                title={listData.short}
+                description={listData.long}
+              />
+            </List.Item>
           )
         }} />
     )}</LoadedSuccessfully>

@@ -2,6 +2,10 @@
   padding: 1em;
 }
 
+.emptyLayout {
+  justify-content: center;
+}
+
 .fields {
   display: flex;
   flex-direction: row;

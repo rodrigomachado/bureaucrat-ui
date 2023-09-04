@@ -2,17 +2,11 @@ import { Entity, EntityListData } from './entity'
 
 export class User implements Entity {
   id: string
-  firstName: string
-  middleName: string
-  lastName: string
-  birtDate: string
+  fields: { [key: string]: any }
 
   constructor(json: any) {
     this.id = json.id
-    this.firstName = json.firstName
-    this.middleName = json.middleName
-    this.lastName = json.lastName
-    this.birtDate = json.birtDate
+    this.fields = json
   }
 
   key(): string {
@@ -21,8 +15,12 @@ export class User implements Entity {
 
   listData(): EntityListData {
     return {
-      short: `${this.firstName} ${this.lastName}`,
-      long: `${this.firstName} ${this.middleName} ${this.lastName}`,
+      short: `${this.fields.firstName} ${this.fields.lastName}`,
+      long: `${this.fields.firstName} ${this.fields.middleName} ${this.fields.lastName}`,
     }
+  }
+
+  field(name: string) {
+    return this.fields[name]
   }
 }
