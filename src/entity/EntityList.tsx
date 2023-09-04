@@ -1,4 +1,4 @@
-import { Avatar, Button, List, Skeleton, Space, Tooltip } from 'antd'
+import { Avatar, Button, Empty, List, Skeleton, Space, Tooltip } from 'antd'
 import { Content } from 'antd/lib/layout/layout'
 import { FilterFilled, PlusSquareFilled, ReloadOutlined, UserOutlined } from '@ant-design/icons'
 import React from 'react'
@@ -54,11 +54,7 @@ type LoadedSuccessfullyProps = {
 function LoadedSuccessfully({ entities: { data, loading, error }, children }: LoadedSuccessfullyProps) {
   emitError(error)
   if (error) {
-    return (
-      < div > Error: {
-        '' + error
-      }</div >
-    )
+    return (<Empty />)
   }
 
   if (loading) return (

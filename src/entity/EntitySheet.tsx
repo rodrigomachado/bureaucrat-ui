@@ -2,7 +2,7 @@ import { Button, DatePicker, Empty, Form, Input, Layout, Space, Tooltip } from '
 import { Content } from 'antd/lib/layout/layout'
 import { DeleteFilled, SaveFilled, SettingFilled } from '@ant-design/icons'
 import dayjs from 'dayjs'
-import React, { useState } from 'react'
+import React from 'react'
 
 import { Entity } from '.'
 import Header from '../layout/Header'
@@ -38,20 +38,21 @@ const EntitySheet = ({ entity }: EntitySheetProps) => {
       <Content className={s.content}>
         <div className={s.fields}>
           <Form>
+            {/* TODO Iterate over fields metadata to render the imputs */}
             <Form.Item label='First Name'>
-              <Input placeholder='Douglas' value={entity.field('firstName')} />
+              <Input placeholder='Douglas' value={entity.fieldValue('firstName')} />
             </Form.Item>
             <Form.Item label='Middle Name'>
-              <Input placeholder='Noël' value={entity.field('middleName')} />
+              <Input placeholder='Noël' value={entity.fieldValue('middleName')} />
             </Form.Item>
             <Form.Item label='Last Name'>
-              <Input placeholder='Adams' value={entity.field('lastName')} />
+              <Input placeholder='Adams' value={entity.fieldValue('lastName')} />
             </Form.Item>
             <Form.Item label='Birth Date'>
               <DatePicker
                 placeholder='1952-03-11'
                 format={DATE_FORMAT}
-                value={dayjs(entity.field('birthDate'), DATE_FORMAT)}
+                value={dayjs(entity.fieldValue('birthDate'), DATE_FORMAT)}
               />
             </Form.Item>
           </Form>

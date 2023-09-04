@@ -11,5 +11,6 @@ export function emitError(error: any): void {
   useEffect(() => {
     if (!error) return
     setErrors([...errors, error])
+    console.error(error)
   }, [error])
 }

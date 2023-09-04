@@ -1,52 +1,48 @@
 import { useEffect, useState } from 'react'
 
-import { User } from './domainAuthorization';
-
-/**
- * An error returned by the API.
- * Wraps multiple erros in a single object to allow for batched GQL queries.
- */
-export class ApiError {
-  errors: any[]
-
-  constructor(errors: any[]) {
-    this.errors = errors
-  }
-
-  toString() {
-    if (!this.errors.length) {
-      return 'ApiError: ---'
-    }
-    if (this.errors.length === 1) {
-      return 'ApiError: ' + errorToString(this.errors[0])
-    }
-    return `ApiError: ${this.errors.map(errorToString).join(' :: ')}`
-  }
-}
-
-function errorToString(error: any): string {
-  if (error.message) return error.message
-  return error.toString()
-}
+import { Entity, EntityMeta } from './entity';
 
 /**
  * Bridge to the API.
  */
 export class Api {
-  async users({ signal }: { signal: AbortSignal }): Promise<User[]> {
+  /**
+   * Fetches all `entityTypes` from the API.
+   */
+  async entityTypes({ signal }: { signal: AbortSignal }): Promise<EntityMeta[]> {
     const q = await this.query(`{
-      users { id firstName, middleName, lastName, birthDate }
+      entityTypes {
+        name
+        fields { name type }
+      }
     }`, { signal })
-    return q.users.map((user: any) => new User(user))
+    return q.entityTypes.map((m: any) => new EntityMeta(m))
   }
 
+  /**
+   * Fetches all entities for a particular `entityType`.
+   */
+  async entities(
+    { entityType, signal }: { entityType: EntityMeta, signal: AbortSignal },
+  ): Promise<Entity[]> {
+    const q = await this.query(`
+      query entities($entityType: String) {
+        entities(entityType: $entityType)
+      }
+    `, { variables: { entityType: entityType.name }, signal })
+    return q.entities.map((user: any) => new Entity(entityType, user))
+  }
+
+  /**
+   * Performs an API GQL query with abort and error handling capabilities.
+   */
   private async query(
-    gql: string, { signal }: { signal: AbortSignal },
+    gql: string, { variables, signal }: { variables?: Object, signal: AbortSignal },
   ): Promise<any> {
     const json = await fetch('http://localhost:4000/api', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query: gql }),
+      body: JSON.stringify({ query: gql, variables }),
       signal,
     }).then((response) => response.json())
     if (json.errors) throw new ApiError(
@@ -67,7 +63,7 @@ export type ApiData<S> = {
 }
 
 /**
- * Wrapper for a API calls that can be aborted.
+ * Wrapper for API calls that can be aborted.
  */
 type ApiFn<S> = (signal: AbortSignal) => Promise<S>
 
@@ -108,4 +104,31 @@ export function useApi<S>(
 
   const reload = () => fnCall(null as any)
   return { data, loading, error, reload }
+}
+
+/**
+ * An error returned by the API.
+ * Wraps multiple erros in a single object to allow for batched GQL queries.
+ */
+export class ApiError {
+  errors: any[]
+
+  constructor(errors: any[]) {
+    this.errors = errors
+  }
+
+  toString() {
+    if (!this.errors.length) {
+      return 'ApiError: ---'
+    }
+    if (this.errors.length === 1) {
+      return 'ApiError: ' + errorToString(this.errors[0])
+    }
+    return `ApiError: ${this.errors.map(errorToString).join(' :: ')}`
+  }
+}
+
+function errorToString(error: any): string {
+  if (error.message) return error.message
+  return error.toString()
 }

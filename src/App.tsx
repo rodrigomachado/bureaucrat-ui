@@ -14,7 +14,11 @@ const { Sider } = Layout
 const api = new Api()
 
 const App = () => {
-  const entities = useApi((signal) => api.users({ signal }))
+  const entities = useApi(async (signal) => {
+    // TODO Offer user hability to choose the working Entity Type.
+    const entityTypes = await api.entityTypes({ signal })
+    return api.entities({ entityType: entityTypes[0], signal })
+  })
   const [errors, setErrors] = useState<any[]>([])
 
   const [selectedEntity, setSelectedEntity] = useState<Entity | null>(null)
