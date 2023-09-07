@@ -26,7 +26,7 @@ const EntitySheet = ({ entity }: EntitySheetProps) => {
 
   return (
     <Layout>
-      <Header title={entity.listData().short}>
+      <Header title={entity.titleFormat().title}>
         <Space.Compact block>
           <Tooltip title='Save'><Button icon={<SaveFilled />} /></Tooltip>
           <Tooltip title='Delete'><Button icon={<DeleteFilled />} /></Tooltip>

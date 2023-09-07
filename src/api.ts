@@ -14,6 +14,7 @@ export class Api {
       entityTypes {
         name
         identifierFieldName
+        titleFormat { title subtitle }
         fields { name type }
       }
     }`, { signal })

@@ -1,12 +1,14 @@
 export class EntityMeta {
   name: string
   identifierFieldName: string
+  titleFormat: { title: string[], subtitle: string[] }
   fields: { [fieldName: string]: FieldMeta }
 
   constructor(json: any) {
     // TODO Validate json schema
     this.name = json.name
     this.identifierFieldName = json.identifierFieldName
+    this.titleFormat = json.titleFormat
     this.fields = {}
     for (const f of json.fields) {
       if (this.fields[f.name]) throw new Error(`Field ${f.name} defined more than once for ${this.name}`)
@@ -60,21 +62,24 @@ export class Entity {
     return this.fields[this.meta.identifierFieldName].value
   }
 
-  listData(): EntityListData {
-    // TODO Use EntityMeta to evaluate the EntityListData
+  titleFormat(): EntityTitle {
     return {
-      short: `${this.fields.firstName.value} ${this.fields.lastName.value} `,
-      long: `${this.fields.firstName.value} ${this.fields.middleName.value} ${this.fields.lastName.value} `,
+      title: this.renderFieldComposition(this.meta.titleFormat.title),
+      subtitle: this.renderFieldComposition(this.meta.titleFormat.subtitle),
     }
   }
 
   fieldValue(fieldName: string): any {
     return this.fields[fieldName].value
   }
+
+  private renderFieldComposition(fields: string[]): string {
+    return fields.map(x => `${this.fields[x].value}`).join(' ')
+  }
 }
-export type EntityListData = {
-  short: string,
-  long: string,
+export type EntityTitle = {
+  title: string,
+  subtitle: string,
 }
 
 export class Field {

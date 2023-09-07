@@ -29,14 +29,14 @@ const EntityList = ({ entities, onEntitySelected }: EntityListProps) => (<>
         dataSource={data}
         rowKey={entity => entity.key()}
         renderItem={entity => {
-          const listData = entity.listData()
+          const titleFormat = entity.titleFormat()
           return (
             <List.Item onClick={() => onEntitySelected(entity)}>
               <List.Item.Meta
                 className={s.entityItem}
                 avatar={<Avatar icon={<UserOutlined />} />}
-                title={listData.short}
-                description={listData.long}
+                title={titleFormat.title}
+                description={titleFormat.subtitle}
               />
             </List.Item>
           )
