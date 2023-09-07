@@ -85,7 +85,7 @@ export function useApi<S>(
     setError(null)
     setLoading(true)
     try {
-      // TODO: Validate expected data shape
+      // TODO: Validate expected data shape?
       setData(await apiFn(signal))
       setLoading(false)
       setError(null)

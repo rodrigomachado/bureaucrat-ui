@@ -38,7 +38,7 @@ const EntitySheet = ({ entity }: EntitySheetProps) => {
       <Content className={s.content}>
         <div className={s.fields}>
           <Form>
-            {/* TODO Iterate over fields metadata to render the imputs */}
+            {/* TODO Iterate over fields metadata to render the inputs */}
             <Form.Item label='First Name'>
               <Input placeholder='Douglas' value={entity.fieldValue('firstName')} />
             </Form.Item>
