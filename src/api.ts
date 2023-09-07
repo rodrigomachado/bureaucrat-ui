@@ -13,6 +13,7 @@ export class Api {
     const q = await this.query(`{
       entityTypes {
         name
+        identifierFieldName
         fields { name type }
       }
     }`, { signal })

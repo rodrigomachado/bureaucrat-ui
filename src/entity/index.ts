@@ -1,10 +1,12 @@
 export class EntityMeta {
   name: string
+  identifierFieldName: string
   fields: { [fieldName: string]: FieldMeta }
 
   constructor(json: any) {
     // TODO Validate json schema
     this.name = json.name
+    this.identifierFieldName = json.identifierFieldName
     this.fields = {}
     for (const f of json.fields) {
       if (this.fields[f.name]) throw new Error(`Field ${f.name} defined more than once for ${this.name}`)
@@ -55,8 +57,7 @@ export class Entity {
   }
 
   key() {
-    // TODO Use EntityMeta to evaluate the entity identifier
-    return this.fields.id.value
+    return this.fields[this.meta.identifierFieldName].value
   }
 
   listData(): EntityListData {
