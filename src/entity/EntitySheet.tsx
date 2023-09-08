@@ -4,7 +4,7 @@ import { DeleteFilled, SaveFilled, SettingFilled } from '@ant-design/icons'
 import dayjs from 'dayjs'
 import React from 'react'
 
-import { Entity } from '.'
+import { Entity, FieldMeta, FieldType } from '.'
 import Header from '../layout/Header'
 
 import s from './EntitySheet.css'
@@ -37,29 +37,44 @@ const EntitySheet = ({ entity }: EntitySheetProps) => {
       </Header>
       <Content className={s.content}>
         <div className={s.fields}>
-          <Form>
-            {/* TODO Iterate over fields metadata to render the inputs */}
-            <Form.Item label='First Name'>
-              <Input placeholder='Douglas' value={entity.fieldValue('firstName')} />
-            </Form.Item>
-            <Form.Item label='Middle Name'>
-              <Input placeholder='Noël' value={entity.fieldValue('middleName')} />
-            </Form.Item>
-            <Form.Item label='Last Name'>
-              <Input placeholder='Adams' value={entity.fieldValue('lastName')} />
-            </Form.Item>
-            <Form.Item label='Birth Date'>
-              <DatePicker
-                placeholder='1952-03-11'
-                format={DATE_FORMAT}
-                value={dayjs(entity.fieldValue('birthDate'), DATE_FORMAT)}
-              />
-            </Form.Item>
+          <Form>{
+            Object.values(entity.meta.fields).map(f => (
+              <Field key={f.id} fieldMeta={f} fieldValue={entity.fieldValue(f.name)} />
+            ))
+          }
           </Form>
         </div>
       </Content>
     </Layout>
   )
+}
+
+type FieldProps = {
+  fieldMeta: FieldMeta,
+  fieldValue: any,
+}
+const Field = ({ fieldMeta, fieldValue }: FieldProps) => {
+  if (fieldMeta.hidden) return null
+
+  switch (fieldMeta.type) {
+    case FieldType.STRING:
+      return (
+        <Form.Item label={fieldMeta.displayName}>
+          <Input value={fieldValue} />
+        </Form.Item>
+      )
+    case FieldType.DATE:
+      return (
+        <Form.Item label={fieldMeta.displayName}>
+          <DatePicker
+            format={DATE_FORMAT}
+            value={dayjs(fieldValue, DATE_FORMAT)}
+          />
+        </Form.Item>
+      )
+    default:
+      throw new Error(`Fields of type ${fieldMeta.type} not yet support`)
+  }
 }
 
 export default EntitySheet

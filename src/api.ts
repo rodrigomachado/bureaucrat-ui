@@ -15,7 +15,7 @@ export class Api {
         name
         identifierFieldName
         titleFormat { title subtitle }
-        fields { name type }
+        fields { id name displayName placeholder type hidden }
       }
     }`, { signal })
     return q.entityTypes.map((m: any) => new EntityMeta(m))

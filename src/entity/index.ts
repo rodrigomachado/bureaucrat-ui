@@ -18,22 +18,30 @@ export class EntityMeta {
 }
 
 export class FieldMeta {
+  id: number
   name: string
+  displayName: string
+  placeholder: string
   type: FieldType
+  hidden: boolean
 
   constructor(json: any) {
     // TODO Validate json schema
+    this.id = json.id
     this.name = json.name
+    this.displayName = json.displayName
+    this.placeholder = json.placeholder
     this.type = json.type
+    this.hidden = json.hidden
   }
 }
 
-enum FieldType {
-  STRING = 'string',
-  NUMBER = 'number',
-  DATE = 'date',
-  DATE_TIME = 'datetime',
-  TIME = 'time',
+export enum FieldType {
+  STRING = 'STRING',
+  NUMBER = 'NUMBER',
+  DATE = 'DATE',
+  DATE_TIME = 'DATETIME',
+  TIME = 'TIME',
 }
 
 export class Entity {
