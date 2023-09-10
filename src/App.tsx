@@ -1,8 +1,8 @@
 import { ConfigProvider, Layout, theme } from 'antd'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { Api, useApi } from './api'
-import { Entity } from './entity'
+import { Entity, EntityMeta } from './entity'
 import EntityList from './entity/EntityList'
 import EntitySheet from './entity/EntitySheet'
 import { ErrorContext, ErrorDialog } from './error'
@@ -14,21 +14,34 @@ const { Sider } = Layout
 const api = new Api()
 
 const App = () => {
-  const entities = useApi(async (signal) => {
-    // TODO Offer user hability to choose the working Entity Type.
+  // State: entityTypes , selectedEntityType
+  const [selectedEntityType, setSelectedEntityType] = useState<EntityMeta | null>(null)
+  const entityTypes = useApi(async (signal) => {
     const entityTypes = await api.entityTypes({ signal })
-    return api.entities({ entityType: entityTypes[0], signal })
+    if (entityTypes.length && !selectedEntityType) setSelectedEntityType(entityTypes[0])
+    return entityTypes
   })
-  const [errors, setErrors] = useState<any[]>([])
 
+  // State: entities, selectedEntity
+  const entities = useApi(async (signal) => {
+    if (entityTypes.loading || entityTypes.error) return []
+    return api.entities({ entityType: selectedEntityType!, signal })
+  }, [selectedEntityType, entityTypes.loading, entityTypes.error])
   const [selectedEntity, setSelectedEntity] = useState<Entity | null>(null)
+
+  // State: errors
+  const [errors, setErrors] = useState<any[]>([])
 
   return (
     <ConfigProvider theme={{ algorithm: theme.darkAlgorithm }}>
       <ErrorContext.Provider value={{ errors, setErrors }}>
         <Layout hasSider className={s.main}>
           <Sider className={s.sider} width={360}>
-            <EntityList entities={entities} onEntitySelected={setSelectedEntity} />
+            <EntityList
+              entityTypes={entityTypes}
+              selectedEntityType={selectedEntityType} onEntityTypeSelected={setSelectedEntityType}
+              entities={entities} onEntitySelected={setSelectedEntity}
+            />
           </Sider>
           <EntitySheet entity={selectedEntity} />
         </Layout>

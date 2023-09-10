@@ -1,9 +1,11 @@
-import { Avatar, Button, Empty, List, Skeleton, Space, Tooltip } from 'antd'
+import { Avatar, Button, Dropdown, Empty, List, Skeleton, Space, Tooltip, Typography } from 'antd'
 import { Content } from 'antd/lib/layout/layout'
-import { FilterFilled, PlusSquareFilled, ReloadOutlined, UserOutlined } from '@ant-design/icons'
+import {
+  CaretDownOutlined, FilterFilled, PlusSquareFilled, ReloadOutlined, UserOutlined,
+} from '@ant-design/icons'
 import React from 'react'
 
-import { Entity } from '.'
+import { Entity, EntityMeta } from '.'
 import { ApiData } from '../api'
 import Header from '../layout/Header'
 import { emitError } from '../error'
@@ -11,11 +13,22 @@ import { emitError } from '../error'
 import s from './EntityList.css'
 
 type EntityListProps = {
+  entityTypes: ApiData<EntityMeta[]>,
+  selectedEntityType: EntityMeta | null,
+  onEntityTypeSelected: (type: EntityMeta) => void,
   entities: ApiData<Entity[]>,
   onEntitySelected: (entity: Entity) => void,
 }
-const EntityList = ({ entities, onEntitySelected }: EntityListProps) => (<>
-  <Header title='Users'>
+const EntityList = ({
+  entityTypes,
+  selectedEntityType, onEntityTypeSelected,
+  entities, onEntitySelected,
+}: EntityListProps) => (<>
+  <Header title={
+    <EntityTypeSelector
+      selected={selectedEntityType} options={entityTypes} onSelected={onEntityTypeSelected}
+    />
+  }>
     <Space.Compact block>
       <Tooltip title='New'><Button icon={<PlusSquareFilled />} /></Tooltip>
       <Tooltip title='Search'><Button icon={<FilterFilled />} /></Tooltip>
@@ -46,6 +59,27 @@ const EntityList = ({ entities, onEntitySelected }: EntityListProps) => (<>
 </>)
 
 export default EntityList
+
+type EntityTypeSelectorProps = {
+  selected: EntityMeta | null,
+  options: ApiData<EntityMeta[]>,
+  onSelected: (entityType: EntityMeta) => void,
+}
+
+const EntityTypeSelector = ({ selected, options, onSelected }: EntityTypeSelectorProps) => {
+  if (!options.data || !selected) return <Skeleton />
+  const keyToType = new Map<string, EntityMeta>(options.data.map(o => [o.id.toString(), o]))
+  return (
+    <Dropdown menu={{
+      items: options.data.map(o => ({
+        key: o.id, label: o.name, disabled: o.id === selected.id,
+      })),
+      onClick: ({ key }) => onSelected(keyToType.get(key)!),
+    }}>
+      <Typography.Title>{selected.name} <CaretDownOutlined style={{ fontSize: '0.5em' }} /></Typography.Title>
+    </Dropdown >
+  )
+}
 
 type LoadedSuccessfullyProps = {
   entities: ApiData<Entity[]>,

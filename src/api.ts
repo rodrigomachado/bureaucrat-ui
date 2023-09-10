@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { Entity, EntityMeta } from './entity';
 
@@ -12,6 +12,7 @@ export class Api {
   async entityTypes({ signal }: { signal: AbortSignal }): Promise<EntityMeta[]> {
     const q = await this.query(`{
       entityTypes {
+        id
         name
         identifierFieldName
         titleFormat { title subtitle }
@@ -72,12 +73,13 @@ type ApiFn<S> = (signal: AbortSignal) => Promise<S>
 /**
  * A React hook that calls an API function and returns the result.
  * @param apiFn A function wrapping an API call.
+ * @param deps The API call will only execute when the dependencies changes
  * @returns The tuple `[data, loading, error, reload]`, with the result of the
  *  API call, a boolean indicating whether the call is in progress, the
  *  resulting error (if any), and a function to call the API again.
  */
 export function useApi<S>(
-  apiFn: ApiFn<S>,
+  apiFn: ApiFn<S>, deps: React.DependencyList = []
 ): ApiData<S> {
   const [data, setData] = useState<S | undefined>(undefined)
   const [loading, setLoading] = useState(true)
@@ -102,7 +104,7 @@ export function useApi<S>(
     const abort = new AbortController()
     fnCall(abort.signal)
     return () => abort.abort()
-  }, [])
+  }, deps)
 
   const reload = () => fnCall(null as any)
   return { data, loading, error, reload }

@@ -1,4 +1,5 @@
 export class EntityMeta {
+  id: number
   name: string
   identifierFieldName: string
   titleFormat: { title: string[], subtitle: string[] }
@@ -6,6 +7,7 @@ export class EntityMeta {
 
   constructor(json: any) {
     // TODO Validate json schema
+    this.id = json.id
     this.name = json.name
     this.identifierFieldName = json.identifierFieldName
     this.titleFormat = json.titleFormat
