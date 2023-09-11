@@ -17,46 +17,53 @@ type EntityListProps = {
   selectedEntityType: EntityMeta | null,
   onEntityTypeSelected: (type: EntityMeta) => void,
   entities: ApiData<Entity[]>,
-  onEntitySelected: (entity: Entity) => void,
+  onEntitySelected: (entity: Entity | null) => void,
 }
 const EntityList = ({
   entityTypes,
   selectedEntityType, onEntityTypeSelected,
   entities, onEntitySelected,
-}: EntityListProps) => (<>
-  <Header title={
-    <EntityTypeSelector
-      selected={selectedEntityType} options={entityTypes} onSelected={onEntityTypeSelected}
-    />
-  }>
-    <Space.Compact block>
-      <Tooltip title='New'><Button icon={<PlusSquareFilled />} /></Tooltip>
-      <Tooltip title='Search'><Button icon={<FilterFilled />} /></Tooltip>
-      <Tooltip title='Reload'><Button icon={<ReloadOutlined />} onClick={entities.reload} /></Tooltip>
-    </Space.Compact>
-  </Header>
-  <Content className={s.content}>
-    <LoadedSuccessfully entities={entities}>{data => (
-      <List
-        itemLayout='horizontal'
-        dataSource={data}
-        rowKey={entity => entity.key()}
-        renderItem={entity => {
-          const titleFormat = entity.titleFormat()
-          return (
-            <List.Item onClick={() => onEntitySelected(entity)}>
-              <List.Item.Meta
-                className={s.entityItem}
-                avatar={<Avatar icon={<UserOutlined />} />}
-                title={titleFormat.title}
-                description={titleFormat.subtitle}
-              />
-            </List.Item>
-          )
-        }} />
-    )}</LoadedSuccessfully>
-  </Content>
-</>)
+}: EntityListProps) => {
+  const onSelectorSelect = (entityType: EntityMeta) => {
+    onEntityTypeSelected(entityType)
+    onEntitySelected(null)
+  }
+
+  return (<>
+    <Header title={
+      <EntityTypeSelector
+        selected={selectedEntityType} options={entityTypes} onSelected={onSelectorSelect}
+      />
+    }>
+      <Space.Compact block>
+        <Tooltip title='New'><Button icon={<PlusSquareFilled />} /></Tooltip>
+        <Tooltip title='Search'><Button icon={<FilterFilled />} /></Tooltip>
+        <Tooltip title='Reload'><Button icon={<ReloadOutlined />} onClick={entities.reload} /></Tooltip>
+      </Space.Compact>
+    </Header>
+    <Content className={s.content}>
+      <LoadedSuccessfully entities={entities}>{data => (
+        <List
+          itemLayout='horizontal'
+          dataSource={data}
+          rowKey={entity => entity.key()}
+          renderItem={entity => {
+            const titleFormat = entity.titleFormat()
+            return (
+              <List.Item onClick={() => onEntitySelected(entity)}>
+                <List.Item.Meta
+                  className={s.entityItem}
+                  avatar={<Avatar icon={<UserOutlined />} />}
+                  title={titleFormat.title}
+                  description={titleFormat.subtitle}
+                />
+              </List.Item>
+            )
+          }} />
+      )}</LoadedSuccessfully>
+    </Content>
+  </>)
+}
 
 export default EntityList
 

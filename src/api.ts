@@ -14,9 +14,9 @@ export class Api {
       entityTypes {
         id
         name
-        identifierFieldName
+        code
         titleFormat { title subtitle }
-        fields { id name displayName placeholder type hidden }
+        fields { id name code placeholder type identifier hidden }
       }
     }`, { signal })
     return q.entityTypes.map((m: any) => new EntityMeta(m))
@@ -32,7 +32,7 @@ export class Api {
       query entities($entityType: String) {
         entities(entityType: $entityType)
       }
-    `, { variables: { entityType: entityType.name }, signal })
+    `, { variables: { entityType: entityType.code }, signal })
     return q.entities.map((user: any) => new Entity(entityType, user))
   }
 

@@ -1,20 +1,20 @@
 export class EntityMeta {
   id: number
   name: string
-  identifierFieldName: string
-  titleFormat: { title: string[], subtitle: string[] }
+  code: string
+  titleFormat: { title: string, subtitle: string }
   fields: { [fieldName: string]: FieldMeta }
 
   constructor(json: any) {
     // TODO Validate json schema
     this.id = json.id
     this.name = json.name
-    this.identifierFieldName = json.identifierFieldName
+    this.code = json.code
     this.titleFormat = json.titleFormat
     this.fields = {}
     for (const f of json.fields) {
-      if (this.fields[f.name]) throw new Error(`Field ${f.name} defined more than once for ${this.name}`)
-      this.fields[f.name] = new FieldMeta(f)
+      if (this.fields[f.code]) throw new Error(`Field "${f.code}" defined more than once for ${this.code}`)
+      this.fields[f.code] = new FieldMeta(f)
     }
   }
 }
@@ -22,28 +22,30 @@ export class EntityMeta {
 export class FieldMeta {
   id: number
   name: string
-  displayName: string
+  code: string
   placeholder: string
   type: FieldType
+  identifier: boolean
   hidden: boolean
 
   constructor(json: any) {
     // TODO Validate json schema
     this.id = json.id
     this.name = json.name
-    this.displayName = json.displayName
+    this.code = json.code
     this.placeholder = json.placeholder
     this.type = json.type
+    this.identifier = json.identifier
     this.hidden = json.hidden
   }
 }
 
 export enum FieldType {
-  STRING = 'STRING',
-  NUMBER = 'NUMBER',
-  DATE = 'DATE',
-  DATE_TIME = 'DATETIME',
-  TIME = 'TIME',
+  STRING = 'string',
+  NUMBER = 'number',
+  DATE = 'date',
+  DATETIME = 'datetime',
+  TIME = 'time',
 }
 
 export class Entity {
@@ -61,21 +63,24 @@ export class Entity {
 
     this.meta = meta
     this.fields = {}
-    for (const fieldName in this.meta.fields) {
-      const meta = this.meta.fields[fieldName]
-      if (!meta) throw new Error(`Field '${fieldName}' not found in entity '${this.meta.name}'`)
-      this.fields[fieldName] = new Field(meta, data[fieldName])
+    for (const fieldCode in this.meta.fields) {
+      const meta = this.meta.fields[fieldCode]
+      if (!meta) throw new Error(`Field '${fieldCode}' not found in entity '${this.meta.code}'`)
+      this.fields[fieldCode] = new Field(meta, data[fieldCode])
     }
   }
 
   key() {
-    return this.fields[this.meta.identifierFieldName].value
+    // TODO Should the key derivation function be cached?
+    const ids = Object.values(this.fields).filter(x => x.meta.identifier).map(x => x.value)
+    if (!ids.length) throw new Error(`EntityType "${this.meta.name}" has no identifiers`)
+    return JSON.stringify(ids.length === 1 ? ids[0] : ids)
   }
 
   titleFormat(): EntityTitle {
     return {
-      title: this.renderFieldComposition(this.meta.titleFormat.title),
-      subtitle: this.renderFieldComposition(this.meta.titleFormat.subtitle),
+      title: this.formatTitlePattern(this.meta.titleFormat.title),
+      subtitle: this.formatTitlePattern(this.meta.titleFormat.subtitle),
     }
   }
 
@@ -83,8 +88,21 @@ export class Entity {
     return this.fields[fieldName].value
   }
 
-  private renderFieldComposition(fields: string[]): string {
-    return fields.map(x => `${this.fields[x].value}`).join(' ')
+  private formatTitlePattern(pattern: string): string {
+    let match
+    let formatted = pattern
+
+    while (match = /#\{([^}]+)\}/.exec(formatted)) {
+      const fieldName = match[1]
+      const field = this.fields[fieldName]
+      if (!field) throw new Error(
+        `Unable to format title for entity type "${this.meta.name}: "` +
+        `Field "${fieldName}" mentioned in formatting pattern "${pattern}" not found.`
+      )
+      formatted = formatted.replaceAll(`#{${fieldName}}`, field.value?.toString() || '')
+    }
+
+    return formatted
   }
 }
 export type EntityTitle = {

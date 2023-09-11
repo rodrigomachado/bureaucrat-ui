@@ -39,7 +39,7 @@ const EntitySheet = ({ entity }: EntitySheetProps) => {
         <div className={s.fields}>
           <Form>{
             Object.values(entity.meta.fields).map(f => (
-              <Field key={f.id} fieldMeta={f} fieldValue={entity.fieldValue(f.name)} />
+              <Field key={f.id} fieldMeta={f} fieldValue={entity.fieldValue(f.code)} />
             ))
           }
           </Form>
@@ -59,13 +59,13 @@ const Field = ({ fieldMeta, fieldValue }: FieldProps) => {
   switch (fieldMeta.type) {
     case FieldType.STRING:
       return (
-        <Form.Item label={fieldMeta.displayName}>
+        <Form.Item label={fieldMeta.name}>
           <Input value={fieldValue} />
         </Form.Item>
       )
     case FieldType.DATE:
       return (
-        <Form.Item label={fieldMeta.displayName}>
+        <Form.Item label={fieldMeta.name}>
           <DatePicker
             format={DATE_FORMAT}
             value={dayjs(fieldValue, DATE_FORMAT)}
