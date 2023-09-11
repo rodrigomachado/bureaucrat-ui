@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { ErrorContext } from '.'
+import { ErrorContext } from './error'
 import { Button, Modal } from 'antd'
 
 const ErrorDialog = () => {

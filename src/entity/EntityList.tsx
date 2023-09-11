@@ -5,7 +5,7 @@ import {
 } from '@ant-design/icons'
 import React from 'react'
 
-import { Entity, EntityMeta } from '.'
+import { Entity, EntityMeta } from './entity'
 import { ApiData } from '../api'
 import Header from '../layout/Header'
 import { emitError } from '../error'

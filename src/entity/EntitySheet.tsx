@@ -4,7 +4,7 @@ import { DeleteFilled, SaveFilled, SettingFilled } from '@ant-design/icons'
 import dayjs from 'dayjs'
 import React from 'react'
 
-import { Entity, FieldMeta, FieldType } from '.'
+import { Entity, FieldMeta, FieldType } from './entity'
 import Header from '../layout/Header'
 
 import s from './EntitySheet.css'
