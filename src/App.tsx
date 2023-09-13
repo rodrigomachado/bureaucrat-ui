@@ -24,7 +24,7 @@ const App = () => {
 
   // State: entities, selectedEntity
   const entities = useApi(async (signal) => {
-    if (entityTypes.loading || entityTypes.error) return []
+    if (!entityTypes.data || !selectedEntityType) return []
     return api.entities({ entityType: selectedEntityType!, signal })
   }, [selectedEntityType, entityTypes.loading, entityTypes.error])
   const [selectedEntity, setSelectedEntity] = useState<Entity | null>(null)
