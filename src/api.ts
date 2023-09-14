@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-import { Entity, EntityMeta } from './entity';
+import { Entity, EntityMeta } from './entity'
 
 /**
  * Bridge to the API.
@@ -40,7 +40,7 @@ export class Api {
    * Performs an API GQL query with abort and error handling capabilities.
    */
   private async query(
-    gql: string, { variables, signal }: { variables?: Object, signal: AbortSignal },
+    gql: string, { variables, signal }: { variables?: any, signal: AbortSignal },
   ): Promise<any> {
     const json = await fetch('http://localhost:4000/api', {
       method: 'POST',

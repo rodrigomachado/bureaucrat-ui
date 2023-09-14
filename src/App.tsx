@@ -1,5 +1,5 @@
 import { ConfigProvider, Layout, theme } from 'antd'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 
 import { Api, useApi } from './api'
 import { Entity, EntityMeta } from './entity'

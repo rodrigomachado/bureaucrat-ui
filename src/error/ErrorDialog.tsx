@@ -5,9 +5,10 @@ import { Button, Modal } from 'antd'
 const ErrorDialog = () => {
   const { errors, setErrors } = useContext(ErrorContext)
   const close = () => setErrors([])
+
   return (
     <Modal
-      title="Errors"
+      title='Errors'
       centered
       open={!!errors.length}
       onOk={close}

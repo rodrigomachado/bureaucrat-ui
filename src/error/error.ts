@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect } from 'react';
+import React, { createContext, useContext, useEffect } from 'react'
 
 export const ErrorContext = createContext<{
   errors: any[], setErrors: React.Dispatch<React.SetStateAction<any[]>>

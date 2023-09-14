@@ -1,0 +1,33 @@
+{
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "sourceType": "module"
+  },
+  "ignorePatterns": [
+    "/dist",
+    "/node_modules",
+    "/webpack.config.js",
+    "!/.eslintrc"
+  ],
+  "plugins": [
+    "@typescript-eslint"
+  ],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "rules": {
+    "semi": [
+      "error",
+      "never"
+    ],
+    "no-cond-assign": "off",
+    "quotes": [
+      "error",
+      "single"
+    ],
+    "@typescript-eslint/no-explicit-any": "warn"
+  }
+}
