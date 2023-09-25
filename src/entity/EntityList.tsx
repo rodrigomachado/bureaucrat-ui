@@ -1,7 +1,7 @@
 import { Avatar, Button, Dropdown, Empty, List, Skeleton, Space, Tooltip, Typography } from 'antd'
 import { Content } from 'antd/lib/layout/layout'
 import {
-  CaretDownOutlined, FilterFilled, PlusSquareFilled, ReloadOutlined, UserOutlined,
+  CaretDownOutlined, FilterFilled, PlusSquareFilled, ReloadOutlined, FireFilled,
 } from '@ant-design/icons'
 import React from 'react'
 
@@ -13,27 +13,25 @@ import { emitError } from '../error'
 import s from './EntityList.css'
 
 type EntityListProps = {
-  entityTypes: ApiData<EntityMeta[]>,
-  selectedEntityType: EntityMeta | null,
-  onEntityTypeSelected: (type: EntityMeta) => void,
+  types: ApiData<EntityMeta[]>,
+  selectedType: EntityMeta | null,
+  onTypeSelected: (type: EntityMeta) => void,
   entities: ApiData<Entity[]>,
   onEntitySelected: (entity: Entity | null) => void,
 }
 const EntityList = ({
-  entityTypes,
-  selectedEntityType, onEntityTypeSelected,
+  types,
+  selectedType, onTypeSelected,
   entities, onEntitySelected,
 }: EntityListProps) => {
-  const onSelectorSelect = (entityType: EntityMeta) => {
-    onEntityTypeSelected(entityType)
+  const onSelect = (type: EntityMeta) => {
+    onTypeSelected(type)
     onEntitySelected(null)
   }
 
   return (<>
     <Header title={
-      <EntityTypeSelector
-        selected={selectedEntityType} options={entityTypes} onSelected={onSelectorSelect}
-      />
+      <EntityTypeSelector selected={selectedType} options={types} onSelected={onSelect} />
     }>
       <Space.Compact block>
         <Tooltip title='New'><Button icon={<PlusSquareFilled />} /></Tooltip>
@@ -42,18 +40,18 @@ const EntityList = ({
       </Space.Compact>
     </Header>
     <Content className={s.content}>
-      <LoadedSuccessfully entities={entities}>{data => (
+      <LoadedSuccessfully type={selectedType} entities={entities}>{(type, data) => (
         <List
           itemLayout='horizontal'
           dataSource={data}
-          rowKey={entity => entity.key()}
+          rowKey={entity => type.keyFor(entity)}
           renderItem={entity => {
-            const titleFormat = entity.titleFormat()
+            const titleFormat = type.formatTitle(entity)
             return (
               <List.Item onClick={() => onEntitySelected(entity)}>
                 <List.Item.Meta
                   className={s.entityItem}
-                  avatar={<Avatar icon={<UserOutlined />} />}
+                  avatar={<Avatar icon={<FireFilled />} />}
                   title={titleFormat.title}
                   description={titleFormat.subtitle}
                 />
@@ -89,14 +87,14 @@ const EntityTypeSelector = ({ selected, options, onSelected }: EntityTypeSelecto
 }
 
 type LoadedSuccessfullyProps = {
+  type: EntityMeta | null,
   entities: ApiData<Entity[]>,
-  children: (data: Entity[]) => React.ReactNode
+  children: (type: EntityMeta, data: Entity[]) => React.ReactNode
 }
-function LoadedSuccessfully({ entities: { data, loading, error }, children }: LoadedSuccessfullyProps) {
+function LoadedSuccessfully({ type, entities: { data, loading, error }, children }: LoadedSuccessfullyProps) {
   emitError(error)
-  if (error) {
-    return (<Empty />)
-  }
+  if (error) return (<Empty />)
+  if (!type) return (<Empty />)
 
   if (loading) return (
     <List itemLayout='horizontal'>
@@ -113,5 +111,5 @@ function LoadedSuccessfully({ entities: { data, loading, error }, children }: Lo
   )
 
   if (!data) throw new Error('No data available for non-loading, non-error entites')
-  return children(data)
+  return children(type, data)
 }

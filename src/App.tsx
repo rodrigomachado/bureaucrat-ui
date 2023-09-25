@@ -14,19 +14,19 @@ const { Sider } = Layout
 const api = new Api()
 
 const App = () => {
-  // State: entityTypes , selectedEntityType
-  const [selectedEntityType, setSelectedEntityType] = useState<EntityMeta | null>(null)
-  const entityTypes = useApi(async (signal) => {
-    const entityTypes = await api.entityTypes({ signal })
-    if (entityTypes.length && !selectedEntityType) setSelectedEntityType(entityTypes[0])
-    return entityTypes
+  // State: type , selectedType
+  const [selectedType, setSelectedType] = useState<EntityMeta | null>(null)
+  const types = useApi(async (signal) => {
+    const types = await api.entityTypes({ signal })
+    if (types.length && !selectedType) setSelectedType(types[0])
+    return types
   })
 
   // State: entities, selectedEntity
   const entities = useApi(async (signal) => {
-    if (!entityTypes.data || !selectedEntityType) return []
-    return api.entities({ entityType: selectedEntityType!, signal })
-  }, [selectedEntityType, entityTypes.loading, entityTypes.error])
+    if (!types.data || !selectedType) return []
+    return api.entities({ entityType: selectedType!, signal })
+  }, [selectedType, types.loading, types.error])
   const [selectedEntity, setSelectedEntity] = useState<Entity | null>(null)
 
   // State: errors
@@ -38,12 +38,12 @@ const App = () => {
         <Layout hasSider className={s.main}>
           <Sider className={s.sider} width={360}>
             <EntityList
-              entityTypes={entityTypes}
-              selectedEntityType={selectedEntityType} onEntityTypeSelected={setSelectedEntityType}
+              types={types}
+              selectedType={selectedType} onTypeSelected={setSelectedType}
               entities={entities} onEntitySelected={setSelectedEntity}
             />
           </Sider>
-          <EntitySheet entity={selectedEntity} />
+          <EntitySheet type={selectedType} initialValue={selectedEntity} />
         </Layout>
         <ErrorDialog />
       </ErrorContext.Provider>

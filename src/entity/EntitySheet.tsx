@@ -2,9 +2,9 @@ import { Button, DatePicker, Empty, Form, Input, Layout, Space, Tooltip } from '
 import { Content } from 'antd/lib/layout/layout'
 import { DeleteFilled, SaveFilled, SettingFilled } from '@ant-design/icons'
 import dayjs from 'dayjs'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
-import { Entity, FieldMeta, FieldType } from './entity'
+import { Entity, EntityMeta, FieldMeta, FieldType } from './entity'
 import Header from '../layout/Header'
 
 import s from './EntitySheet.css'
@@ -13,10 +13,20 @@ import s from './EntitySheet.css'
 const DATE_FORMAT = 'YYYY-MM-DD'
 
 type EntitySheetProps = {
-  entity: Entity | null,
+  type: EntityMeta | null,
+  initialValue: Entity | null,
 }
-const EntitySheet = ({ entity }: EntitySheetProps) => {
-  if (!entity) {
+const EntitySheet = ({ type, initialValue }: EntitySheetProps) => {
+  const [value, setValue] = useState<Entity>({})
+  useEffect(() => setValue(initialValue || {}), [initialValue])
+  const setField = (fCode: string) => (fieldValue: any) => {
+    setValue({
+      ...value,
+      [fCode]: fieldValue,
+    })
+  }
+
+  if (!type || !initialValue) {
     return (
       <Layout className={s.emptyLayout}>
         <Empty description='No selected data' />
@@ -26,7 +36,7 @@ const EntitySheet = ({ entity }: EntitySheetProps) => {
 
   return (
     <Layout>
-      <Header title={entity.titleFormat().title}>
+      <Header title={type.formatTitle(value).title}>
         <Space.Compact block>
           <Tooltip title='Save'><Button icon={<SaveFilled />} /></Tooltip>
           <Tooltip title='Delete'><Button icon={<DeleteFilled />} /></Tooltip>
@@ -38,8 +48,13 @@ const EntitySheet = ({ entity }: EntitySheetProps) => {
       <Content className={s.content}>
         <div className={s.fields}>
           <Form>{
-            Object.values(entity.meta.fields).map(f => (
-              <Field key={f.id} fieldMeta={f} fieldValue={entity.fieldValue(f.code)} />
+            Object.values(type.fields).map(f => (
+              <Field
+                key={f.id}
+                type={f}
+                value={value[f.code]}
+                setValue={setField(f.code)}
+              />
             ))
           }
           </Form>
@@ -50,30 +65,32 @@ const EntitySheet = ({ entity }: EntitySheetProps) => {
 }
 
 type FieldProps = {
-  fieldMeta: FieldMeta,
-  fieldValue: any,
+  type: FieldMeta,
+  value: any,
+  setValue: (value: any) => void,
 }
-const Field = ({ fieldMeta, fieldValue }: FieldProps) => {
-  if (fieldMeta.hidden) return null
+const Field = ({ type, value, setValue }: FieldProps) => {
+  if (type.hidden) return null
 
-  switch (fieldMeta.type) {
+  switch (type.type) {
     case FieldType.STRING:
       return (
-        <Form.Item label={fieldMeta.name}>
-          <Input value={fieldValue} />
+        <Form.Item label={type.name}>
+          <Input value={value} onChange={(e) => setValue(e.target.value)} />
         </Form.Item>
       )
     case FieldType.DATE:
       return (
-        <Form.Item label={fieldMeta.name}>
+        <Form.Item label={type.name}>
           <DatePicker
             format={DATE_FORMAT}
-            value={dayjs(fieldValue, DATE_FORMAT)}
+            value={dayjs(value, DATE_FORMAT)}
+            onChange={e => setValue(e?.format(DATE_FORMAT))}
           />
         </Form.Item>
       )
     default:
-      throw new Error(`Fields of type ${fieldMeta.type} not yet support`)
+      throw new Error(`Fields of type '${type.type}' not yet support`)
   }
 }
 

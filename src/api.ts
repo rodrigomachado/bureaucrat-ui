@@ -33,7 +33,7 @@ export class Api {
         entities(entityType: $entityType)
       }
     `, { variables: { entityType: entityType.code }, signal })
-    return q.entities.map((user: any) => new Entity(entityType, user))
+    return q.entities.map((entity: any) => entityType.validateEntity(entity))
   }
 
   /**
