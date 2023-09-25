@@ -79,30 +79,13 @@ export class Entity {
 
   titleFormat(): EntityTitle {
     return {
-      title: this.formatTitlePattern(this.meta.titleFormat.title),
-      subtitle: this.formatTitlePattern(this.meta.titleFormat.subtitle),
+      title: formatTitlePattern(this.meta, this.fields, this.meta.titleFormat.title),
+      subtitle: formatTitlePattern(this.meta, this.fields, this.meta.titleFormat.subtitle),
     }
   }
 
   fieldValue(fieldName: string): any {
     return this.fields[fieldName].value
-  }
-
-  private formatTitlePattern(pattern: string): string {
-    let match
-    let formatted = pattern
-
-    while (match = /#\{([^}]+)\}/.exec(formatted)) {
-      const fieldName = match[1]
-      const field = this.fields[fieldName]
-      if (!field) throw new Error(
-        `Unable to format title for entity type "${this.meta.name}: "` +
-        `Field "${fieldName}" mentioned in formatting pattern "${pattern}" not found.`
-      )
-      formatted = formatted.replaceAll(`#{${fieldName}}`, field.value?.toString() || '')
-    }
-
-    return formatted
   }
 }
 export type EntityTitle = {
@@ -119,4 +102,22 @@ export class Field {
     this.meta = meta
     this.value = value
   }
+}
+
+// TODO WIP Find a better place for `formatTitlePattern`
+export function formatTitlePattern(meta: EntityMeta, data: { [name: string]: Field }, pattern: string): string {
+  let match
+  let formatted = pattern
+
+  while (match = /#\{([^}]+)\}/.exec(formatted)) {
+    const fieldName = match[1]
+    const field = data[fieldName]
+    if (!field) throw new Error(
+      `Unable to format title for entity type "${meta.name}: "` +
+      `Field "${fieldName}" mentioned in formatting pattern "${pattern}" not found.`
+    )
+    formatted = formatted.replaceAll(`#{${fieldName}}`, field.value?.toString() || '')
+  }
+
+  return formatted
 }
