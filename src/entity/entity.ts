@@ -85,7 +85,6 @@ export type EntityTitle = {
   subtitle: string,
 }
 
-// TODO WIP Find a better place for `formatTitlePattern`
 export function formatTitlePattern(type: EntityMeta, data: { [name: string]: any }, pattern: string): string {
   let match
   let formatted = pattern

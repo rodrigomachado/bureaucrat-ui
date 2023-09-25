@@ -9,8 +9,8 @@ export class Api {
   /**
    * Fetches all `entityTypes` from the API.
    */
-  async entityTypes({ signal }: { signal: AbortSignal }): Promise<EntityMeta[]> {
-    const q = await this.query(`{
+  async entityTypes({ signal }: { signal?: AbortSignal }): Promise<EntityMeta[]> {
+    const r = await this.request(`{
       entityTypes {
         id
         name
@@ -19,28 +19,42 @@ export class Api {
         fields { id name code placeholder type identifier hidden }
       }
     }`, { signal })
-    return q.entityTypes.map((m: any) => new EntityMeta(m))
+    return r.entityTypes.map((m: any) => new EntityMeta(m))
   }
 
   /**
    * Fetches all entities for a particular `entityType`.
    */
   async entities(
-    { entityType, signal }: { entityType: EntityMeta, signal: AbortSignal },
+    { entityType, signal }: { entityType: EntityMeta, signal?: AbortSignal },
   ): Promise<Entity[]> {
-    const q = await this.query(`
-      query entities($entityType: String) {
+    const r = await this.request(`
+      query ($entityType: String) {
         entities(entityType: $entityType)
       }
     `, { variables: { entityType: entityType.code }, signal })
-    return q.entities.map((entity: any) => entityType.validateEntity(entity))
+    return r.entities.map((entity: any) => entityType.validateEntity(entity))
+  }
+
+  /**
+   * Updates an `entity` of a particular `entityType`.
+   */
+  async updateEntity(
+    { entityType, entity, signal }: { entityType: EntityMeta, entity: Entity, signal?: AbortSignal },
+  ): Promise<Entity> {
+    const r = await this.request(`
+      mutation ($code: String, $data: JSONObject) {
+        entityUpdate(entityTypeCode: $code, data: $data)
+      }
+    `, { variables: { code: entityType.code, data: entity }, signal })
+    return entityType.validateEntity(r.entityUpdate)
   }
 
   /**
    * Performs an API GQL query with abort and error handling capabilities.
    */
-  private async query(
-    gql: string, { variables, signal }: { variables?: any, signal: AbortSignal },
+  private async request(
+    gql: string, { variables, signal }: { variables?: any, signal?: AbortSignal },
   ): Promise<any> {
     const json = await fetch('http://localhost:4000/api', {
       method: 'POST',
@@ -62,7 +76,7 @@ export type ApiData<S> = {
   data: S | undefined,
   loading: boolean,
   error: any,
-  reload: () => void,
+  reload: () => Promise<void>,
 }
 
 /**
@@ -78,7 +92,7 @@ type ApiFn<S> = (signal: AbortSignal) => Promise<S>
  *  API call, a boolean indicating whether the call is in progress, the
  *  resulting error (if any), and a function to call the API again.
  */
-export function useApi<S>(
+export function useQueryApi<S>(
   apiFn: ApiFn<S>, deps: React.DependencyList = []
 ): ApiData<S> {
   const [data, setData] = useState<S | undefined>(undefined)

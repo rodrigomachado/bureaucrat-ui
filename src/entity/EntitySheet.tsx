@@ -15,8 +15,9 @@ const DATE_FORMAT = 'YYYY-MM-DD'
 type EntitySheetProps = {
   type: EntityMeta | null,
   initialValue: Entity | null,
+  onUpdate: (entity: Entity) => void,
 }
-const EntitySheet = ({ type, initialValue }: EntitySheetProps) => {
+const EntitySheet = ({ type, initialValue, onUpdate }: EntitySheetProps) => {
   const [value, setValue] = useState<Entity>({})
   useEffect(() => setValue(initialValue || {}), [initialValue])
   const setField = (fCode: string) => (fieldValue: any) => {
@@ -38,7 +39,7 @@ const EntitySheet = ({ type, initialValue }: EntitySheetProps) => {
     <Layout>
       <Header title={type.formatTitle(value).title}>
         <Space.Compact block>
-          <Tooltip title='Save'><Button icon={<SaveFilled />} /></Tooltip>
+          <Tooltip title='Save'><Button icon={<SaveFilled />} onClick={() => onUpdate(value)} /></Tooltip>
           <Tooltip title='Delete'><Button icon={<DeleteFilled />} /></Tooltip>
         </Space.Compact>
         <Space.Compact block>
