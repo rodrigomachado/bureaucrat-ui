@@ -1,4 +1,6 @@
-import { Avatar, Button, Dropdown, Empty, List, Skeleton, Space, Tooltip, Typography } from 'antd'
+import {
+  Avatar, Button, Dropdown, Empty, List, Skeleton, Space, Tooltip, Typography,
+} from 'antd'
 import { Content } from 'antd/lib/layout/layout'
 import {
   CaretDownOutlined, FilterFilled, PlusSquareFilled, ReloadOutlined, FireFilled,
@@ -31,16 +33,22 @@ const EntityList = ({
 
   return (<>
     <Header title={
-      <EntityTypeSelector selected={selectedType} options={types} onSelected={onSelect} />
+      <EntityTypeSelector
+        selected={selectedType} options={types} onSelected={onSelect}
+      />
     }>
       <Space.Compact block>
         <Tooltip title='New'><Button icon={<PlusSquareFilled />} /></Tooltip>
         <Tooltip title='Search'><Button icon={<FilterFilled />} /></Tooltip>
-        <Tooltip title='Reload'><Button icon={<ReloadOutlined />} onClick={entities.reload} /></Tooltip>
+        <Tooltip title='Reload'>
+          <Button icon={<ReloadOutlined />} onClick={entities.reload} />
+        </Tooltip>
       </Space.Compact>
     </Header>
     <Content className={s.content}>
-      <LoadedSuccessfully type={selectedType} entities={entities}>{(type, data) => (
+      <LoadedSuccessfully
+        type={selectedType} entities={entities}
+      >{(type, data) => (
         <List
           itemLayout='horizontal'
           dataSource={data}
@@ -71,9 +79,13 @@ type EntityTypeSelectorProps = {
   onSelected: (entityType: EntityMeta) => void,
 }
 
-const EntityTypeSelector = ({ selected, options, onSelected }: EntityTypeSelectorProps) => {
+const EntityTypeSelector = (
+  { selected, options, onSelected }: EntityTypeSelectorProps,
+) => {
   if (!options.data || !selected) return <Skeleton />
-  const keyToType = new Map<string, EntityMeta>(options.data.map(o => [o.id.toString(), o]))
+  const keyToType = new Map<string, EntityMeta>(
+    options.data.map(o => [o.id.toString(), o]),
+  )
   return (
     <Dropdown menu={{
       items: options.data.map(o => ({
@@ -81,7 +93,9 @@ const EntityTypeSelector = ({ selected, options, onSelected }: EntityTypeSelecto
       })),
       onClick: ({ key }) => onSelected(keyToType.get(key)!),
     }}>
-      <Typography.Title>{selected.name} <CaretDownOutlined style={{ fontSize: '0.5em' }} /></Typography.Title>
+      <Typography.Title>{
+        selected.name
+      } <CaretDownOutlined style={{ fontSize: '0.5em' }} /></Typography.Title>
     </Dropdown >
   )
 }
@@ -91,7 +105,11 @@ type LoadedSuccessfullyProps = {
   entities: ApiData<Entity[]>,
   children: (type: EntityMeta, data: Entity[]) => React.ReactNode
 }
-function LoadedSuccessfully({ type, entities: { data, loading, error }, children }: LoadedSuccessfullyProps) {
+function LoadedSuccessfully({
+  type,
+  entities: { data, loading, error },
+  children,
+}: LoadedSuccessfullyProps) {
   emitError(error)
   if (error) return (<Empty />)
   if (!type) return (<Empty />)
@@ -110,6 +128,8 @@ function LoadedSuccessfully({ type, entities: { data, loading, error }, children
     </List>
   )
 
-  if (!data) throw new Error('No data available for non-loading, non-error entites')
+  if (!data) throw new Error(
+    'No data available for non-loading, non-error entites',
+  )
   return children(type, data)
 }

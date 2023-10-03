@@ -8,7 +8,7 @@ describe('entity.ts - formatTitlePattern', () => {
           name: 'User', fields: {
             first_name: {},
             last_name: {},
-          }
+          },
         } as any,
         { first_name: 'Dave', last_name: 'Matthews' },
         '#{first_name}-#{last_name}',

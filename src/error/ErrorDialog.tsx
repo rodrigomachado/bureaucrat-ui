@@ -13,7 +13,9 @@ const ErrorDialog = () => {
       open={!!errors.length}
       onOk={close}
       onCancel={close}
-      footer={[<Button key='ok' type='primary' onClick={close} autoFocus>Ok</Button>]}
+      footer={[
+        <Button key='ok' type='primary' onClick={close} autoFocus>Ok</Button>,
+      ]}
       width={1000}
     >
       <ul>

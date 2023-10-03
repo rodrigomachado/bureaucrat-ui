@@ -9,7 +9,9 @@ export class Api {
   /**
    * Fetches all `entityTypes` from the API.
    */
-  async entityTypes({ signal }: { signal?: AbortSignal }): Promise<EntityMeta[]> {
+  async entityTypes(
+    { signal }: { signal?: AbortSignal },
+  ): Promise<EntityMeta[]> {
     const r = await this.request(`{
       entityTypes {
         id
@@ -39,8 +41,11 @@ export class Api {
   /**
    * Updates an `entity` of a particular `entityType`.
    */
-  async updateEntity(
-    { entityType, entity, signal }: { entityType: EntityMeta, entity: Entity, signal?: AbortSignal },
+  async updateEntity({
+    entityType, entity, signal,
+  }: {
+    entityType: EntityMeta, entity: Entity, signal?: AbortSignal,
+  },
   ): Promise<Entity> {
     const r = await this.request(`
       mutation ($code: String, $data: JSONObject) {
@@ -54,7 +59,8 @@ export class Api {
    * Performs an API GQL query with abort and error handling capabilities.
    */
   private async request(
-    gql: string, { variables, signal }: { variables?: any, signal?: AbortSignal },
+    gql: string,
+    { variables, signal }: { variables?: any, signal?: AbortSignal },
   ): Promise<any> {
     const json = await fetch('http://localhost:4000/api', {
       method: 'POST',

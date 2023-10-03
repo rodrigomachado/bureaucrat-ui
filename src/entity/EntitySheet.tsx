@@ -1,4 +1,6 @@
-import { Button, DatePicker, Empty, Form, Input, Layout, Space, Tooltip } from 'antd'
+import {
+  Button, DatePicker, Empty, Form, Input, Layout, Space, Tooltip,
+} from 'antd'
 import { Content } from 'antd/lib/layout/layout'
 import { DeleteFilled, SaveFilled, SettingFilled } from '@ant-design/icons'
 import dayjs from 'dayjs'
@@ -39,7 +41,9 @@ const EntitySheet = ({ type, initialValue, onUpdate }: EntitySheetProps) => {
     <Layout>
       <Header title={type.formatTitle(value).title}>
         <Space.Compact block>
-          <Tooltip title='Save'><Button icon={<SaveFilled />} onClick={() => onUpdate(value)} /></Tooltip>
+          <Tooltip title='Save'>
+            <Button icon={<SaveFilled />} onClick={() => onUpdate(value)} />
+          </Tooltip>
           <Tooltip title='Delete'><Button icon={<DeleteFilled />} /></Tooltip>
         </Space.Compact>
         <Space.Compact block>

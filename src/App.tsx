@@ -31,7 +31,8 @@ const App = () => {
 
   const updateEntity = async (type: EntityMeta, data: Entity) => {
     // TODO Double check IDs did not change?
-    // TODO Optimistically update `entity` and `entity.reload(…)` in case of error / abort
+    // TODO Optimistically update `entity` and `entity.reload(…)` in case of
+    // error / abort
     await api.updateEntity({ entityType: type, entity: data })
     await entities.reload()
   }
