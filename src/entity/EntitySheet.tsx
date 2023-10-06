@@ -8,6 +8,7 @@ import React, { useEffect, useState } from 'react'
 
 import { Entity, EntityMeta, FieldMeta, FieldType } from './entity'
 import Header from '../layout/Header'
+import { useKeyboardShortcut } from '../lib/keyboardShortcuts'
 
 import s from './EntitySheet.css'
 
@@ -22,6 +23,9 @@ type EntitySheetProps = {
 const EntitySheet = ({ type, initialValue, onUpdate }: EntitySheetProps) => {
   const [value, setValue] = useState<Entity>({})
   useEffect(() => setValue(initialValue || {}), [initialValue])
+
+  useKeyboardShortcut([{ meta: true, key: 's' }], () => onUpdate(value))
+
   const setField = (fCode: string) => (fieldValue: any) => {
     setValue({
       ...value,
