@@ -55,7 +55,7 @@ const EntitySheet = ({ type, initialValue, onUpdate }: EntitySheetProps) => {
           <Form>{
             Object.values(type.fields).map(f => (
               <Field
-                key={f.id}
+                key={f.code}
                 type={f}
                 value={value[f.code]}
                 setValue={setField(f.code)}

@@ -14,11 +14,10 @@ export class Api {
   ): Promise<EntityMeta[]> {
     const r = await this.request(`{
       entityTypes {
-        id
-        name
         code
+        name
         titleFormat { title subtitle }
-        fields { id name code placeholder type identifier hidden }
+        fields { code name placeholder type identifier hidden }
       }
     }`, { signal })
     return r.entityTypes.map((m: any) => new EntityMeta(m))

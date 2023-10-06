@@ -84,12 +84,12 @@ const EntityTypeSelector = (
 ) => {
   if (!options.data || !selected) return <Skeleton />
   const keyToType = new Map<string, EntityMeta>(
-    options.data.map(o => [o.id.toString(), o]),
+    options.data.map(o => [o.code, o]),
   )
   return (
     <Dropdown menu={{
       items: options.data.map(o => ({
-        key: o.id, label: o.name, disabled: o.id === selected.id,
+        key: o.code, label: o.name, disabled: o.code === selected.code,
       })),
       onClick: ({ key }) => onSelected(keyToType.get(key)!),
     }}>

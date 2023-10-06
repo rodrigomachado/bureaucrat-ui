@@ -1,15 +1,13 @@
 export class EntityMeta {
-  id: number
-  name: string
   code: string
+  name: string
   titleFormat: { title: string, subtitle: string }
   fields: { [fieldName: string]: FieldMeta }
 
   constructor(json: any) {
     // TODO Validate json schema
-    this.id = json.id
-    this.name = json.name
     this.code = json.code
+    this.name = json.name
     this.titleFormat = json.titleFormat
     this.fields = {}
     for (const f of json.fields) {
@@ -56,9 +54,8 @@ export class EntityMeta {
 }
 
 export class FieldMeta {
-  id: number
-  name: string
   code: string
+  name: string
   placeholder: string
   type: FieldType
   identifier: boolean
@@ -66,9 +63,8 @@ export class FieldMeta {
 
   constructor(json: any) {
     // TODO Validate json schema
-    this.id = json.id
-    this.name = json.name
     this.code = json.code
+    this.name = json.name
     this.placeholder = json.placeholder
     this.type = json.type
     this.identifier = json.identifier
