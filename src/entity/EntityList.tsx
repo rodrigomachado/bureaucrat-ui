@@ -10,7 +10,6 @@ import React from 'react'
 import { Entity, EntityMeta } from './entity'
 import { ApiData } from '../api'
 import Header from '../layout/Header'
-import { emitError } from '../error'
 
 import s from './EntityList.css'
 
@@ -110,7 +109,6 @@ function LoadedSuccessfully({
   entities: { data, loading, error },
   children,
 }: LoadedSuccessfullyProps) {
-  emitError(error)
   if (error) return (<Empty />)
   if (!type) return (<Empty />)
 

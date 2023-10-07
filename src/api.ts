@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 
 import { Entity, EntityMeta } from './entity'
+import { useErrorEmitter } from './lib/error'
 
 /**
  * Bridge to the API.
@@ -103,6 +104,7 @@ export function useQueryApi<S>(
   const [data, setData] = useState<S | undefined>(undefined)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<any>(null)
+  const emitError = useErrorEmitter()
 
   const fnCall = async (signal: AbortSignal) => {
     setError(null)
@@ -116,6 +118,7 @@ export function useQueryApi<S>(
       if (signal?.aborted) return
       setLoading(false)
       setError(err)
+      emitError(err)
     }
   }
 
