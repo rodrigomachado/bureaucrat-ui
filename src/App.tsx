@@ -1,4 +1,4 @@
-import { ConfigProvider, Layout, theme } from 'antd'
+import { ConfigProvider, Empty, Layout, theme } from 'antd'
 import React, { useState } from 'react'
 
 import { Api, useQueryApi } from './api'
@@ -52,11 +52,22 @@ const App = () => {
               entities={entities} onEntitySelected={setSelectedEntity}
             />
           </Sider>
-          <EntitySheet
-            type={selectedType}
-            initialValue={selectedEntity}
-            onUpdate={(updated: Entity) => updateEntity(selectedType!, updated)}
-          />
+          {(!selectedType || !selectedEntity) ? (
+            <Layout className={s.emptyLayout}>
+              <Empty description={
+                selectedType ? `No ${selectedType.name} selected` :
+                  'No data selected'
+              } />
+            </Layout>
+          ) : (
+            <EntitySheet
+              key={selectedType.keyFor(selectedEntity)}
+              type={selectedType} initialValue={selectedEntity}
+              onUpdate={
+                (updated: Entity) => updateEntity(selectedType, updated)
+              }
+            />
+          )}
         </Layout>
         <ErrorDialog />
       </ErrorContext.Provider>

@@ -1,10 +1,10 @@
 import {
-  Button, DatePicker, Empty, Form, Input, Layout, Space,
+  Button, DatePicker, Form, Input, Layout, Space,
 } from 'antd'
 import { Content } from 'antd/lib/layout/layout'
 import { DeleteFilled, SaveFilled, SettingFilled } from '@ant-design/icons'
 import dayjs from 'dayjs'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 
 import { Entity, EntityMeta, FieldMeta, FieldType } from './entity'
 import Header from '../layout/Header'
@@ -17,13 +17,12 @@ import s from './EntitySheet.css'
 const DATE_FORMAT = 'YYYY-MM-DD'
 
 type EntitySheetProps = {
-  type: EntityMeta | null,
-  initialValue: Entity | null,
+  type: EntityMeta,
+  initialValue: Entity,
   onUpdate: (entity: Entity) => void,
 }
 const EntitySheet = ({ type, initialValue, onUpdate }: EntitySheetProps) => {
-  const [value, setValue] = useState<Entity>({})
-  useEffect(() => setValue(initialValue || {}), [initialValue])
+  const [value, setValue] = useState<Entity>(initialValue)
 
   useKeyboardShortcut([{ meta: true, key: 's' }], () => doUpdate())
 
@@ -32,14 +31,6 @@ const EntitySheet = ({ type, initialValue, onUpdate }: EntitySheetProps) => {
       ...value,
       [fCode]: fieldValue,
     })
-  }
-
-  if (!type || !initialValue) {
-    return (
-      <Layout className={s.emptyLayout}>
-        <Empty description='No selected data' />
-      </Layout>
-    )
   }
 
   const pristine = Object.keys(type.fields)

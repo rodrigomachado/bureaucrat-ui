@@ -5,3 +5,7 @@
 .sider {
   height: 100vh;
 }
+
+.emptyLayout {
+  justify-content: center;
+}
