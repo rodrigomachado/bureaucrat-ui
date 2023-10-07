@@ -6,6 +6,7 @@ import { Entity, EntityMeta } from './entity'
 import EntityList from './entity/EntityList'
 import EntitySheet from './entity/EntitySheet'
 import { ErrorContext, ErrorDialog } from './error'
+import { NotificationProvider } from './lib/notification'
 
 import s from './App.css'
 
@@ -44,31 +45,33 @@ const App = () => {
   return (
     <ConfigProvider theme={{ algorithm: theme.darkAlgorithm }}>
       <ErrorContext.Provider value={{ errors, setErrors }}>
-        <Layout hasSider className={s.main}>
-          <Sider className={s.sider} width={360}>
-            <EntityList
-              types={types}
-              selectedType={selectedType} onTypeSelected={setSelectedType}
-              entities={entities} onEntitySelected={setSelectedEntity}
-            />
-          </Sider>
-          {(!selectedType || !selectedEntity) ? (
-            <Layout className={s.emptyLayout}>
-              <Empty description={
-                selectedType ? `No ${selectedType.name} selected` :
-                  'No data selected'
-              } />
-            </Layout>
-          ) : (
-            <EntitySheet
-              key={selectedType.keyFor(selectedEntity)}
-              type={selectedType} initialValue={selectedEntity}
-              onUpdate={
-                (updated: Entity) => updateEntity(selectedType, updated)
-              }
-            />
-          )}
-        </Layout>
+        <NotificationProvider>
+          <Layout hasSider className={s.main}>
+            <Sider className={s.sider} width={360}>
+              <EntityList
+                types={types}
+                selectedType={selectedType} onTypeSelected={setSelectedType}
+                entities={entities} onEntitySelected={setSelectedEntity}
+              />
+            </Sider>
+            {(!selectedType || !selectedEntity) ? (
+              <Layout className={s.emptyLayout}>
+                <Empty description={
+                  selectedType ? `No ${selectedType.name} selected` :
+                    'No data selected'
+                } />
+              </Layout>
+            ) : (
+              <EntitySheet
+                key={selectedType.keyFor(selectedEntity)}
+                type={selectedType} initialValue={selectedEntity}
+                onUpdate={
+                  (updated: Entity) => updateEntity(selectedType, updated)
+                }
+              />
+            )}
+          </Layout>
+        </NotificationProvider>
         <ErrorDialog />
       </ErrorContext.Provider>
     </ConfigProvider>

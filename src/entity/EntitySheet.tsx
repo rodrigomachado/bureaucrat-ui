@@ -10,6 +10,7 @@ import { Entity, EntityMeta, FieldMeta, FieldType } from './entity'
 import Header from '../layout/Header'
 import { Tooltip } from '../layout/Tooltip'
 import { useKeyboardShortcut } from '../lib/keyboardShortcuts'
+import { useNotification } from '../lib/notification'
 
 import s from './EntitySheet.css'
 
@@ -19,11 +20,12 @@ const DATE_FORMAT = 'YYYY-MM-DD'
 type EntitySheetProps = {
   type: EntityMeta,
   initialValue: Entity,
-  onUpdate: (entity: Entity) => void,
+  onUpdate: (entity: Entity) => Promise<void>,
 }
 const EntitySheet = ({ type, initialValue, onUpdate }: EntitySheetProps) => {
   const [value, setValue] = useState<Entity>(initialValue)
 
+  const notify = useNotification()
   useKeyboardShortcut([{ meta: true, key: 's' }], () => doUpdate())
 
   const setField = (fCode: string) => (fieldValue: any) => {
@@ -36,9 +38,13 @@ const EntitySheet = ({ type, initialValue, onUpdate }: EntitySheetProps) => {
   const pristine = Object.keys(type.fields)
     .reduce((acc, fCode) => acc && value[fCode] === initialValue[fCode], true)
 
-  const doUpdate = () => {
+  const doUpdate = async () => {
     if (pristine) return
-    onUpdate(value)
+    await onUpdate(value)
+    notify.success({
+      message: 'Saved!',
+      description: `${type.formatTitle(value).title} saved successfully.`,
+    })
   }
 
   return (
