@@ -1,5 +1,5 @@
 import {
-  Button, DatePicker, Empty, Form, Input, Layout, Space, Tooltip,
+  Button, DatePicker, Empty, Form, Input, Layout, Space,
 } from 'antd'
 import { Content } from 'antd/lib/layout/layout'
 import { DeleteFilled, SaveFilled, SettingFilled } from '@ant-design/icons'
@@ -8,6 +8,7 @@ import React, { useEffect, useState } from 'react'
 
 import { Entity, EntityMeta, FieldMeta, FieldType } from './entity'
 import Header from '../layout/Header'
+import { Tooltip } from '../layout/Tooltip'
 import { useKeyboardShortcut } from '../lib/keyboardShortcuts'
 
 import s from './EntitySheet.css'
@@ -24,7 +25,7 @@ const EntitySheet = ({ type, initialValue, onUpdate }: EntitySheetProps) => {
   const [value, setValue] = useState<Entity>({})
   useEffect(() => setValue(initialValue || {}), [initialValue])
 
-  useKeyboardShortcut([{ meta: true, key: 's' }], () => onUpdate(value))
+  useKeyboardShortcut([{ meta: true, key: 's' }], () => doUpdate())
 
   const setField = (fCode: string) => (fieldValue: any) => {
     setValue({
@@ -41,12 +42,24 @@ const EntitySheet = ({ type, initialValue, onUpdate }: EntitySheetProps) => {
     )
   }
 
+  const pristine = Object.keys(type.fields)
+    .reduce((acc, fCode) => acc && value[fCode] === initialValue[fCode], true)
+
+  const doUpdate = () => {
+    if (pristine) return
+    onUpdate(value)
+  }
+
   return (
     <Layout>
       <Header title={type.formatTitle(value).title}>
         <Space.Compact block>
-          <Tooltip title='Save'>
-            <Button icon={<SaveFilled />} onClick={() => onUpdate(value)} />
+          <Tooltip title='Save' shortcut='⌘ + S'>
+            <Button
+              icon={<SaveFilled />}
+              disabled={pristine}
+              onClick={doUpdate}
+            />
           </Tooltip>
           <Tooltip title='Delete'><Button icon={<DeleteFilled />} /></Tooltip>
         </Space.Compact>
