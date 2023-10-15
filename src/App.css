@@ -1,8 +1,6 @@
 .main {
+  display: flex;
   padding: 0;
-}
-
-.sider {
   height: 100vh;
 }
 

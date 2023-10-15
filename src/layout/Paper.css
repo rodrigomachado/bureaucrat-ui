@@ -1,0 +1,7 @@
+.main {
+  margin: 1em;
+  border: 1px rgba(253, 253, 253, 0.12) solid;
+  border-radius: 0.9em;
+  background-color: #001529;
+  width: 300px;
+}

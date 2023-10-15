@@ -5,10 +5,9 @@ import { Api, useQueryApi } from './api'
 import { Entity, EntityMeta } from './entity'
 import EntityList from './entity/EntityList'
 import EntitySheet from './entity/EntitySheet'
+import { Paper } from './layout/Paper'
 
 import s from './App.css'
-
-const { Sider } = Layout
 
 const api = new Api()
 
@@ -39,13 +38,13 @@ const App = () => {
 
   return (
     <Layout hasSider className={s.main}>
-      <Sider className={s.sider} width={360}>
+      <Paper>
         <EntityList
           types={types}
           selectedType={selectedType} onTypeSelected={setSelectedType}
           entities={entities} onEntitySelected={setSelectedEntity}
         />
-      </Sider>
+      </Paper>
       {(!selectedType || !selectedEntity) ? (
         <Layout className={s.emptyLayout}>
           <Empty description={

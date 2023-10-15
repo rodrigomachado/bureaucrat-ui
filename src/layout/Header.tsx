@@ -1,5 +1,4 @@
 import { Typography } from 'antd'
-import { Header as AntHeader } from 'antd/lib/layout/layout'
 import React from 'react'
 
 import s from './Header.css'
@@ -9,7 +8,7 @@ type HeaderProps = {
   children: React.ReactNode,
 }
 const Header = ({ title, children }: HeaderProps) => (
-  <AntHeader className={s.header}>
+  <div className={s.header}>
     <div className={s.headerMain}>{
       typeof title === 'string' ? (
         <Typography.Title className={s.headerTitle}>
@@ -20,7 +19,7 @@ const Header = ({ title, children }: HeaderProps) => (
     <div className={s.headerButtons}>
       {children}
     </div>
-  </AntHeader>
+  </div>
 )
 
 export default Header
