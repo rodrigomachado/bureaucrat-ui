@@ -5,7 +5,6 @@ export class EntityMeta {
   fields: { [fieldName: string]: FieldMeta }
 
   constructor(json: any) {
-    // TODO Validate json schema
     this.code = json.code
     this.name = json.name
     this.titleFormat = json.titleFormat
@@ -62,7 +61,6 @@ export class FieldMeta {
   hidden: boolean
 
   constructor(json: any) {
-    // TODO Validate json schema
     this.code = json.code
     this.name = json.name
     this.placeholder = json.placeholder
@@ -80,7 +78,6 @@ export enum FieldType {
   TIME = 'time',
 }
 
-// TODO Does Typescript have a shorthand plain JS objects?
 export type Entity = {
   [field: string]: any
 }

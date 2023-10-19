@@ -110,7 +110,6 @@ export function useQueryApi<S>(
     setError(null)
     setLoading(true)
     try {
-      // TODO: Validate expected data shape?
       setData(await apiFn(signal))
       setLoading(false)
       setError(null)

@@ -15,7 +15,6 @@ import { useNotification } from '../lib/notification'
 
 import s from './EntitySheet.css'
 
-// TODO Show dates in the browser's default date format
 const DATE_FORMAT = 'YYYY-MM-DD'
 
 type EntitySheetProps = {

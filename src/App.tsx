@@ -27,9 +27,6 @@ const App = () => {
   const [selectedEntity, setSelectedEntity] = useState<Entity | null>(null)
 
   const updateEntity = async (type: EntityMeta, entity: Entity) => {
-    // TODO Double check IDs did not change?
-    // TODO Optimistically update `entity` and `entity.reload(…)` in case of
-    // error / abort
     await api.updateEntity({ entityType: type, entity })
     await entities.reload()
     setSelectedEntity(entity)
