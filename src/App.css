@@ -1,7 +1,8 @@
 .main {
   display: flex;
-  padding: 0;
+  padding: 1em;
   height: 100vh;
+  gap: 1em;
 }
 
 .emptyLayout {

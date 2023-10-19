@@ -9,14 +9,14 @@ type HeaderProps = {
 }
 const Header = ({ title, children }: HeaderProps) => (
   <div className={s.header}>
-    <div className={s.headerMain}>{
-      typeof title === 'string' ? (
-        <Typography.Title className={s.headerTitle}>
-          {title}
-        </Typography.Title>
-      ) : title
-    } </div>
-    <div className={s.headerButtons}>
+    {typeof title === 'string' ? (
+      <Typography.Title className={s.title}>
+        {title}
+      </Typography.Title>
+    ) : (
+      <div className={s.component}>{title}</div>
+    )}
+    <div className={s.buttons}>
       {children}
     </div>
   </div>

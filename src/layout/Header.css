@@ -7,16 +7,19 @@
   height: 64px;
 }
 
-.headerMain {
+.component {
   flex-grow: 1;
-  flex-basis: auto;
 }
 
-.headerTitle {
+.title {
+  flex-grow: 1;
   margin: 0.5em 0 0 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
-.headerButtons {
+.buttons {
   display: flex;
   gap: 1em;
   flex-grow: 0;

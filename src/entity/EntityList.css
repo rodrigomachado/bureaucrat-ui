@@ -1,3 +1,7 @@
+.root {
+  flex-grow: 0;
+}
+
 .content {
   padding: 1em;
 }

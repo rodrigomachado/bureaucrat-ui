@@ -1,5 +1,5 @@
 import {
-  Button, DatePicker, Form, Input, Layout, Space,
+  Button, DatePicker, Form, Input, Space,
 } from 'antd'
 import { Content } from 'antd/lib/layout/layout'
 import { DeleteFilled, SaveFilled, SettingFilled } from '@ant-design/icons'
@@ -8,6 +8,7 @@ import React, { useState } from 'react'
 
 import { Entity, EntityMeta, FieldMeta, FieldType } from './entity'
 import Header from '../layout/Header'
+import { Sheet } from '../layout/Sheet'
 import { Tooltip } from '../layout/Tooltip'
 import { useKeyboardShortcut } from '../lib/keyboardShortcuts'
 import { useNotification } from '../lib/notification'
@@ -48,7 +49,7 @@ const EntitySheet = ({ type, initialValue, onUpdate }: EntitySheetProps) => {
   }
 
   return (
-    <Layout>
+    <Sheet className={s.root}>
       <Header title={type.formatTitle(value).title}>
         <Space.Compact block>
           <Tooltip title='Save' shortcut='⌘ + S'>
@@ -79,7 +80,7 @@ const EntitySheet = ({ type, initialValue, onUpdate }: EntitySheetProps) => {
           </Form>
         </div>
       </Content>
-    </Layout>
+    </Sheet>
   )
 }
 

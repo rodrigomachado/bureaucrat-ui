@@ -5,7 +5,6 @@ import { Api, useQueryApi } from './api'
 import { Entity, EntityMeta } from './entity'
 import EntityList from './entity/EntityList'
 import EntitySheet from './entity/EntitySheet'
-import { Paper } from './layout/Paper'
 
 import s from './App.css'
 
@@ -38,24 +37,23 @@ const App = () => {
 
   return (
     <Layout hasSider className={s.main}>
-      <Paper>
-        <EntityList
-          types={types}
-          selectedType={selectedType} onTypeSelected={setSelectedType}
-          entities={entities} onEntitySelected={setSelectedEntity}
-        />
-      </Paper>
+      <EntityList
+        types={types}
+        selectedType={selectedType} onTypeSelected={setSelectedType}
+        entities={entities} onEntitySelected={setSelectedEntity}
+      />
       {(!selectedType || !selectedEntity) ? (
         <Layout className={s.emptyLayout}>
-          <Empty description={
-            selectedType ? `No ${selectedType.name} selected` :
-              'No data selected'
+          <Empty description={selectedType ?
+            `No ${selectedType.name} selected` :
+            'No data selected'
           } />
         </Layout>
       ) : (
         <EntitySheet
           key={selectedType.keyFor(selectedEntity)}
-          type={selectedType} initialValue={selectedEntity}
+          type={selectedType}
+          initialValue={selectedEntity}
           onUpdate={
             (updated: Entity) => updateEntity(selectedType, updated)
           }

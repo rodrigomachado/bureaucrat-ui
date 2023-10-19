@@ -10,6 +10,7 @@ import React from 'react'
 import { Entity, EntityMeta } from './entity'
 import { ApiData } from '../api'
 import Header from '../layout/Header'
+import { Sheet } from '../layout/Sheet'
 
 import s from './EntityList.css'
 
@@ -30,7 +31,7 @@ const EntityList = ({
     onEntitySelected(null)
   }
 
-  return (<>
+  return (<Sheet slim className={s.root}>
     <Header title={
       <EntityTypeSelector
         selected={selectedType} options={types} onSelected={onSelect}
@@ -67,7 +68,7 @@ const EntityList = ({
           }} />
       )}</LoadedSuccessfully>
     </Content>
-  </>)
+  </Sheet>)
 }
 
 export default EntityList
