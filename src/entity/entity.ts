@@ -17,6 +17,15 @@ export class EntityMeta {
     }
   }
 
+  createEntity(): Entity {
+    return {
+      key: `new-${this.code}-${Math.floor(Math.random() * 10000)}`,
+      typeCode: this.code,
+      new: true,
+      fields: {},
+    }
+  }
+
   wrapFields(fields: EntityFields): Entity {
     const entity = {
       key: this.keyFor(fields),
@@ -28,19 +37,15 @@ export class EntityMeta {
   }
 
   validateEntity(entity: Entity): Entity {
-    const dataFieldsCount = Object.keys(entity.fields).length
-    const metaFieldsCount = Object.keys(this.fields).length
-    if (dataFieldsCount !== metaFieldsCount) throw new Error(
-      'Fields length does not match: ' +
-      `${metaFieldsCount} fields on metadata for ${this.name},` +
-      ` ${dataFieldsCount} fields on providade data`
+    const allowed = Object.keys(this.fields)
+    const declared = Object.keys(entity.fields)
+    const invalid = declared.filter(x => !allowed.includes(x))
+    if (invalid.length) throw new Error(
+      `Invalid fields: ${invalid.join(', ')}`
     )
-    for (const fieldCode in entity.fields) {
-      const meta = this.fields[fieldCode]
-      if (!meta) throw new Error(
-        `Field '${fieldCode}' not found in entity '${this.code}'`,
-      )
-    }
+
+    // TODO WIP Assure mandatory fields are filled.
+
     return entity
   }
 

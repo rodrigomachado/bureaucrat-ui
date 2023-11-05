@@ -22,13 +22,13 @@ const DATE_FORMAT = 'YYYY-MM-DD'
 type EntitySheetProps = {
   type: EntityMeta,
   initialValue: Entity,
-  onUpdate: (entity: Entity) => Promise<void>,
+  onSave: (entity: Entity) => Promise<void>,
 }
-const EntitySheet = ({ type, initialValue, onUpdate }: EntitySheetProps) => {
+const EntitySheet = ({ type, initialValue, onSave }: EntitySheetProps) => {
   const [value, setValue] = useState<Entity>(initialValue)
 
   const notify = useNotification()
-  useKeyboardShortcut([{ meta: true, key: 's' }], () => doUpdate())
+  useKeyboardShortcut([{ meta: true, key: 's' }], () => doSave())
 
   const setField = (fCode: string) => (fieldValue: EntityFieldValue) => {
     setValue({
@@ -45,9 +45,9 @@ const EntitySheet = ({ type, initialValue, onUpdate }: EntitySheetProps) => {
       acc && value.fields[fCode] === initialValue.fields[fCode]
     ), true)
 
-  const doUpdate = async () => {
+  const doSave = async () => {
     if (pristine) return
-    await onUpdate(value)
+    await onSave(value)
     notify.success({
       message: 'Saved!',
       description: type.formatTitle(value.fields).title + 'saved successfully.',
@@ -62,7 +62,7 @@ const EntitySheet = ({ type, initialValue, onUpdate }: EntitySheetProps) => {
             <Button
               icon={<SaveFilled />}
               disabled={pristine}
-              onClick={doUpdate}
+              onClick={doSave}
             />
           </Tooltip>
           <Tooltip title='Delete'><Button icon={<DeleteFilled />} /></Tooltip>

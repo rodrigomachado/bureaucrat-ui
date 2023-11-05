@@ -39,6 +39,20 @@ export class Api {
   }
 
   /**
+   * Creates an `entity` of a paticular `entityType` with the given data.
+   */
+  async createEntity({ entityType, entity, signal }: {
+    entityType: EntityMeta, entity: Entity, signal?: AbortSignal,
+  }): Promise<Entity> {
+    const r = await this.request(`
+      mutation ($code: String, $data: JSONObject) {
+        entityCreate(entityTypeCode: $code, data: $data)
+      }
+    `, { variables: { code: entityType.code, data: entity.fields }, signal })
+    return entityType.validateEntity(entityType.wrapFields(r.entityCreate))
+  }
+
+  /**
    * Updates an `entity` of a particular `entityType`.
    */
   async updateEntity({
