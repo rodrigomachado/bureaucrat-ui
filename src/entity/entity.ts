@@ -17,15 +17,25 @@ export class EntityMeta {
     }
   }
 
+  wrapFields(fields: EntityFields): Entity {
+    const entity = {
+      key: this.keyFor(fields),
+      typeCode: this.code,
+      new: false,
+      fields,
+    }
+    return this.validateEntity(entity)
+  }
+
   validateEntity(entity: Entity): Entity {
-    const dataFieldsCount = Object.keys(entity).length
+    const dataFieldsCount = Object.keys(entity.fields).length
     const metaFieldsCount = Object.keys(this.fields).length
     if (dataFieldsCount !== metaFieldsCount) throw new Error(
       'Fields length does not match: ' +
       `${metaFieldsCount} fields on metadata for ${this.name},` +
       ` ${dataFieldsCount} fields on providade data`
     )
-    for (const fieldCode in this.fields) {
+    for (const fieldCode in entity.fields) {
       const meta = this.fields[fieldCode]
       if (!meta) throw new Error(
         `Field '${fieldCode}' not found in entity '${this.code}'`,
@@ -34,17 +44,17 @@ export class EntityMeta {
     return entity
   }
 
-  keyFor(entity: Entity): string {
+  keyFor(entityFields: EntityFields): string {
     const ids = Object.values(this.fields)
       .filter(x => x.identifier)
-      .map(x => entity[x.code])
+      .map(x => entityFields[x.code])
     if (!ids.length) throw new Error(
       `EntityType "${this.name}" has no identifiers`,
     )
     return JSON.stringify(ids.length === 1 ? ids[0] : ids)
   }
 
-  formatTitle(data: { [k: string]: any }): EntityTitle {
+  formatTitle(data: EntityFields): EntityTitle {
     return {
       title: formatTitlePattern(this, data, this.titleFormat.title),
       subtitle: formatTitlePattern(this, data, this.titleFormat.subtitle),
@@ -79,8 +89,14 @@ export enum FieldType {
 }
 
 export type Entity = {
-  [field: string]: any
+  key: string,
+  typeCode: string,
+  new: boolean,
+  fields: EntityFields,
 }
+
+export type EntityFields = { [key: string]: EntityFieldValue }
+export type EntityFieldValue = string | number | null | undefined
 
 export type EntityTitle = {
   title: string,

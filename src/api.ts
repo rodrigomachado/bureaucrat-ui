@@ -35,7 +35,7 @@ export class Api {
         entities(entityType: $entityType)
       }
     `, { variables: { entityType: entityType.code }, signal })
-    return r.entities.map((entity: any) => entityType.validateEntity(entity))
+    return r.entities.map((fields: any) => entityType.wrapFields(fields))
   }
 
   /**
@@ -51,8 +51,8 @@ export class Api {
       mutation ($code: String, $data: JSONObject) {
         entityUpdate(entityTypeCode: $code, data: $data)
       }
-    `, { variables: { code: entityType.code, data: entity }, signal })
-    return entityType.validateEntity(r.entityUpdate)
+    `, { variables: { code: entityType.code, data: entity.fields }, signal })
+    return entityType.validateEntity(entityType.wrapFields(r.entityUpdate))
   }
 
   /**

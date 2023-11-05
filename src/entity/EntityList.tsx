@@ -52,9 +52,9 @@ const EntityList = ({
         <List
           itemLayout='horizontal'
           dataSource={data}
-          rowKey={entity => type.keyFor(entity)}
+          rowKey={entity => entity.key}
           renderItem={entity => {
-            const titleFormat = type.formatTitle(entity)
+            const titleFormat = type.formatTitle(entity.fields)
             return (
               <List.Item onClick={() => onEntitySelected(entity)}>
                 <List.Item.Meta

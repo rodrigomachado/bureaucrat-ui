@@ -48,7 +48,7 @@ const App = () => {
         </Layout>
       ) : (
         <EntitySheet
-          key={selectedType.keyFor(selectedEntity)}
+          key={selectedEntity.key}
           type={selectedType}
           initialValue={selectedEntity}
           onUpdate={
