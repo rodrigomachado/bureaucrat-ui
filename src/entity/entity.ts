@@ -36,7 +36,10 @@ export class EntityMeta {
     return this.validateEntity(entity)
   }
 
-  validateEntity(entity: Entity): Entity {
+  validateEntity(
+    entity: Entity,
+    { newEntity }: { newEntity: boolean } = { newEntity: false },
+  ): Entity {
     const allowed = Object.keys(this.fields)
     const declared = Object.keys(entity.fields)
     const invalid = declared.filter(x => !allowed.includes(x))
@@ -44,7 +47,22 @@ export class EntityMeta {
       `Invalid fields: ${invalid.join(', ')}`
     )
 
-    // TODO WIP Assure mandatory fields are filled.
+    // Assure mandatory fields are present
+    const nonNull = Object.values(this.fields).filter(f => {
+      if (newEntity && f.generated) return false
+      if (f.mandatory) return true
+      return false
+    }).map(f => f.code)
+    const nulled = nonNull.filter(f => {
+      const value = entity.fields[f]
+      return value === null || value === undefined
+    })
+    if (nulled.length) {
+      throw new Error(
+        `The fields ${nulled.map(f => `\`${f}\``).join(', ')} are mandatory ` +
+        'but were absent.',
+      )
+    }
 
     return entity
   }
@@ -74,6 +92,8 @@ export class FieldMeta {
   type: FieldType
   identifier: boolean
   hidden: boolean
+  mandatory: boolean
+  generated: boolean
 
   constructor(json: any) {
     this.code = json.code
@@ -82,6 +102,8 @@ export class FieldMeta {
     this.type = json.type
     this.identifier = json.identifier
     this.hidden = json.hidden
+    this.mandatory = json.mandatory
+    this.generated = json.generated
   }
 }
 

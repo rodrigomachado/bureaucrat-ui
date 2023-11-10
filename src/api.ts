@@ -18,7 +18,9 @@ export class Api {
         code
         name
         titleFormat { title subtitle }
-        fields { code name placeholder type identifier hidden }
+        fields {
+          code name placeholder type identifier hidden mandatory generated
+        }
       }
     }`, { signal })
     return r.entityTypes.map((m: any) => new EntityMeta(m))
