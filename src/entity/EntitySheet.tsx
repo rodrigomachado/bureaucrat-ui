@@ -12,7 +12,7 @@ import {
 import Header from '../layout/Header'
 import { Sheet } from '../layout/Sheet'
 import { Tooltip } from '../layout/Tooltip'
-import { FormField, useForm } from '../lib/form'
+import { FormField, Rules, useForm } from '../lib/form'
 import { useKeyboardShortcut } from '../lib/keyboardShortcuts'
 import { useNotification } from '../lib/notification'
 
@@ -28,17 +28,35 @@ type EntitySheetProps = {
 const EntitySheet = ({ type, initialValue, onSave }: EntitySheetProps) => {
   const notify = useNotification()
   useKeyboardShortcut([{ meta: true, key: 's' }], () => doSave())
-  const form = useForm(initialValue.fields)
+  // TODO WIP Move FormRules builder to `EntityMeta`
+  const formRules: Rules = Object.values(type.fields).reduce((acc, f) => {
+    acc[f.code] = {}
+    if (f.mandatory && !f.generated) acc[f.code].required = true
+    return acc
+  }, {} as Rules)
+  const form = useForm(Object.keys(type.fields), initialValue.fields, formRules)
 
   const doSave = async () => {
     if (form.pristine) return
+    form.touch()
+
+    const title = type.formatTitle(form.values).title
+
+    if (!form.valuesOk) {
+      notify.error({
+        message: 'Oops... Not able to save.',
+        description: `${title} contains errors.`,
+      })
+      return
+    }
+
     await onSave({
       ...initialValue,
       fields: form.values,
     })
     notify.success({
       message: 'Saved!',
-      description: type.formatTitle(form.values).title + 'saved successfully.',
+      description: `${title} saved successfully.`,
     })
   }
 
@@ -82,14 +100,21 @@ type FieldProps = {
   formField: FormField,
 }
 const Field = ({ type, formField: field }: FieldProps) => {
+  const itemProps: {
+    help?: string, validateStatus?: 'error',
+  } = field.errorMessage ? {
+    help: field.errorMessage, validateStatus: 'error',
+  } : {}
+
   switch (type.type) {
     case FieldType.STRING:
     case FieldType.NUMBER:
       return (
-        <AntForm.Item label={type.name}>
+        <AntForm.Item label={type.name} {...itemProps}>
           <Input
             value={field.value as never}
             onChange={(e) => field.value = e.target.value}
+            onBlur={() => field.touch()}
           />
         </AntForm.Item>
       )

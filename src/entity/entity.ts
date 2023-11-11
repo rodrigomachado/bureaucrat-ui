@@ -135,10 +135,15 @@ export function formatTitlePattern(
 ): string {
   let match
   let formatted = pattern
+  let fieldsUsed = 0
 
   while (match = /#\{([^}]+)\}/.exec(formatted)) {
     const fieldName = match[1]
     const field = data[fieldName]
+    fieldsUsed += (
+      field === null || field === undefined ||
+      typeof (field) === 'string' && field.trim() === ''
+    ) ? 0 : 1
     if (!type.fields[fieldName]) throw new Error(
       `Unable to format title for entity type '${type.name}': ` +
       `Field '${fieldName}' mentioned in formatting pattern not found. ` +
@@ -146,6 +151,8 @@ export function formatTitlePattern(
     )
     formatted = formatted.replaceAll(`#{${fieldName}}`, field?.toString() || '')
   }
+
+  if (!fieldsUsed) return type.name
 
   return formatted
 }
