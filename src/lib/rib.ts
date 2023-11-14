@@ -147,8 +147,6 @@ function createRibArray(
       }
 
       if (!/^\d+$/.test(prop)) {
-        console.log({ prop })
-
         const supportedProp = supportedProps[prop]
         if (supportedProp !== undefined) return supportedProp
         throw new Error(`${path}: Property not supported: ${prop}`)
