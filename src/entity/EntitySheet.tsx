@@ -12,7 +12,7 @@ import {
 import Header from '../layout/Header'
 import { Sheet } from '../layout/Sheet'
 import { Tooltip } from '../layout/Tooltip'
-import { FormField, Rules, useForm } from '../lib/form'
+import { FormField, useForm } from '../lib/form'
 import { useKeyboardShortcut } from '../lib/keyboardShortcuts'
 import { useNotification } from '../lib/notification'
 
@@ -28,13 +28,9 @@ type EntitySheetProps = {
 const EntitySheet = ({ type, initialValue, onSave }: EntitySheetProps) => {
   const notify = useNotification()
   useKeyboardShortcut([{ meta: true, key: 's' }], () => doSave())
-  // TODO WIP Move FormRules builder to `EntityMeta`
-  const formRules: Rules = Object.values(type.fields).reduce((acc, f) => {
-    acc[f.code] = {}
-    if (f.mandatory && !f.generated) acc[f.code].required = true
-    return acc
-  }, {} as Rules)
-  const form = useForm(Object.keys(type.fields), initialValue.fields, formRules)
+  const form = useForm(
+    Object.keys(type.fields), initialValue.fields, type.formRules,
+  )
 
   const doSave = async () => {
     if (form.pristine) return

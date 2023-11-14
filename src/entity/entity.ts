@@ -1,3 +1,5 @@
+import { Rules } from '../lib/form'
+
 export class EntityMeta {
   code: string
   name: string
@@ -65,6 +67,14 @@ export class EntityMeta {
     }
 
     return entity
+  }
+
+  get formRules() {
+    return Object.values(this.fields).reduce((acc, f) => {
+      acc[f.code] = {}
+      if (f.mandatory && !f.generated) acc[f.code].required = true
+      return acc
+    }, {} as Rules)
   }
 
   keyFor(entityFields: EntityFields): string {

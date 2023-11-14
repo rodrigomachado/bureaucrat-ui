@@ -1,55 +1,44 @@
-import { useState } from 'react'
+import { edit, useRib } from './rib'
 
-// TODO WIP Reduce types used.
 type Values = { [field: string]: any }
-type ValuesSetter = React.Dispatch<React.SetStateAction<Values>>
-type ValueSetter = (value: any) => void
 type Fields = { [fieldName: string]: FormField }
 export type Rules = { [fieldName: string]: FieldRules }
 type FieldRules = {
   required?: boolean,
 }
 type Touched = { [fieldName: string]: boolean }
-type TouchedSetter = React.Dispatch<React.SetStateAction<Touched>>
 
 
 export function useForm(
   fieldNames: string[], initialValues: Values = {}, rules: Rules,
 ): Form {
-  // TODO WIP Wrap `[var, setVar]` into a better state accessor object.
-  const [fields, setFields] = useState<Values>(initialValues)
-  const [touched, setTouched] = useState<Touched>({})
-  return new Form(
-    fieldNames, initialValues, fields, setFields, rules, touched, setTouched,
-  )
+  const fields = useRib<Values>(initialValues)
+  const touched = useRib<Touched>({})
+  return new Form(fieldNames, initialValues, fields, rules, touched)
 }
 
 export class Form {
   private fieldNames: string[]
   private initialValues: Values
   private _values: Values
-  private setValues: ValuesSetter
   private fields: Fields = {}
   private _pristine: boolean | undefined
   private rules: Rules
   private touched: Touched
-  private setTouched: TouchedSetter
 
   /**
    * Use `useForm` instead.
    */
   constructor(
     fieldNames: string[],
-    initialValues: Values, values: Values, valuesSetter: ValuesSetter,
-    rules: Rules, touched: Touched, setTouched: TouchedSetter,
+    initialValues: Values, values: Values,
+    rules: Rules, touched: Touched,
   ) {
     this.fieldNames = fieldNames
     this.initialValues = initialValues
     this._values = values
-    this.setValues = valuesSetter
     this.rules = rules
     this.touched = touched
-    this.setTouched = setTouched
   }
 
   /**
@@ -68,18 +57,11 @@ export class Form {
   field(fieldName: string): FormField {
     if (this.fields[fieldName] !== undefined) return this.fields[fieldName]
     const field = new FormField(
-      this.initialValues[fieldName],
-      this.values[fieldName],
-      v => this.setValues(this._values = {
-        ...this._values,
-        [fieldName]: v,
-      }),
-      this.rules[fieldName],
-      this.touched[fieldName],
-      t => this.setTouched(this.touched = {
-        ...this.touched,
-        [fieldName]: t,
-      }),
+      fieldName,
+      this.initialValues,
+      this.values,
+      this.rules,
+      this.touched,
     )
     return this.fields[fieldName] = field
   }
@@ -110,12 +92,11 @@ export class Form {
 }
 
 export class FormField {
-  private initialValue: any
-  private _value: any
-  private setValue: ValueSetter
-  private touched: boolean
-  private setTouched: (touched: boolean) => void
-  private rules: FieldRules
+  private _field: string
+  private _initialValues: Values
+  private _values: Values
+  private _touched: Touched
+  private _rules: Rules
   private _errors?: ValidationError[]
   private _errorMessage?: string | null
 
@@ -123,24 +104,24 @@ export class FormField {
    * Use `Form.formField(…)` instead.
    */
   constructor(
-    initialValue: any,
-    value: any, setter: ValueSetter,
-    rules: FieldRules,
-    touched: boolean, touchSetter: (touched: boolean) => void,
+    field: string,
+    initialValues: Values,
+    values: Values,
+    rules: Rules,
+    touched: Touched,
   ) {
-    this.initialValue = initialValue
-    this._value = value
-    this.setValue = setter
-    this.touched = touched
-    this.setTouched = touchSetter
-    this.rules = rules
+    this._field = field
+    this._initialValues = initialValues
+    this._values = values
+    this._touched = touched
+    this._rules = rules
   }
 
   /**
    * Whether the field remains untouched by the user or not.
    */
   get pristine(): boolean {
-    return this._value === this.initialValue
+    return this._values[this._field] === this._initialValues[this._field]
   }
 
   /**
@@ -150,7 +131,7 @@ export class FormField {
    * Returns the value of the field.
    */
   get value() {
-    return this._value
+    return this._values[this._field]
   }
 
   /**
@@ -164,7 +145,9 @@ export class FormField {
    */
   set value(value: any) {
     if (typeof (value) === 'string' && value.trim() === '') value = undefined
-    this.setValue(this._value = value)
+    edit(this._values, vs => {
+      vs[this._field] = value
+    })
   }
 
   /**
@@ -173,8 +156,10 @@ export class FormField {
    * This will cause the component using the form (`useForm`) to re-render.
    */
   touch() {
-    if (this.touched) return
-    this.setTouched(this.touched = true)
+    if (this._touched[this._field]) return
+    edit(this._touched, ts => {
+      ts[this._field] = true
+    })
   }
 
   /**
@@ -190,7 +175,7 @@ export class FormField {
   get errors() {
     if (this._errors !== undefined) return this._errors
     const errors = []
-    if (this.rules?.required) {
+    if (this._rules[this._field]?.required) {
       const v = this.value
       if (
         v === undefined ||
@@ -208,7 +193,8 @@ export class FormField {
   get errorMessage(): string | null {
     if (this._errorMessage !== undefined) return this._errorMessage
 
-    if (this.pristine && !this.touched) return this._errorMessage = null
+    if (this.pristine && !this._touched[this._field])
+      return this._errorMessage = null
     if (this.errors.length) {
       const message = validationErrorMessages.get(this.errors[0])
       if (!message) throw new Error(
