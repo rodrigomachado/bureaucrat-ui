@@ -144,7 +144,7 @@ export class FormField {
    * This will cause the component using the form (`useForm`) to re-render.
    */
   set value(value: any) {
-    if (typeof (value) === 'string' && value.trim() === '') value = undefined
+    if (typeof (value) === 'string' && value.trim() === '') value = null
     edit(this._values, vs => {
       vs[this._field] = value
     })
