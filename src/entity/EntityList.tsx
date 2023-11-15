@@ -20,11 +20,12 @@ type EntityListProps = {
   onTypeSelected: (type: EntityMeta) => void,
   entities: ApiData<Entity[]>,
   onEntitySelected: (entity: Entity | null) => void,
+  onNewEntity: (() => void) | null,
 }
 const EntityList = ({
   types,
   selectedType, onTypeSelected,
-  entities, onEntitySelected,
+  entities, onEntitySelected, onNewEntity,
 }: EntityListProps) => {
   const onSelect = (type: EntityMeta) => {
     onTypeSelected(type)
@@ -38,7 +39,13 @@ const EntityList = ({
       />
     }>
       <Space.Compact block>
-        <Tooltip title='New'><Button icon={<PlusSquareFilled />} /></Tooltip>
+        <Tooltip title='New'>
+          <Button
+            icon={<PlusSquareFilled />}
+            disabled={!onNewEntity}
+            onClick={onNewEntity as any}
+          />
+        </Tooltip>
         <Tooltip title='Search'><Button icon={<FilterFilled />} /></Tooltip>
         <Tooltip title='Reload'>
           <Button icon={<ReloadOutlined />} onClick={entities.reload} />
@@ -52,9 +59,9 @@ const EntityList = ({
         <List
           itemLayout='horizontal'
           dataSource={data}
-          rowKey={entity => type.keyFor(entity)}
+          rowKey={entity => entity.key}
           renderItem={entity => {
-            const titleFormat = type.formatTitle(entity)
+            const titleFormat = type.formatTitle(entity.fields)
             return (
               <List.Item onClick={() => onEntitySelected(entity)}>
                 <List.Item.Meta

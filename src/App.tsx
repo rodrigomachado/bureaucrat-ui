@@ -26,11 +26,19 @@ const App = () => {
   }, [selectedType, types.loading, types.error])
   const [selectedEntity, setSelectedEntity] = useState<Entity | null>(null)
 
-  const updateEntity = async (type: EntityMeta, entity: Entity) => {
-    await api.updateEntity({ entityType: type, entity })
+  const saveEntity = async (type: EntityMeta, entity: Entity) => {
+    const saved = await (
+      entity.new ?
+        api.createEntity({ entityType: type, entity }) :
+        api.updateEntity({ entityType: type, entity })
+    )
     await entities.reload()
-    setSelectedEntity(entity)
+    setSelectedEntity(saved)
   }
+
+  const newEntity = selectedType && (() => {
+    setSelectedEntity(selectedType.createEntity())
+  })
 
   return (
     <Layout hasSider className={s.main}>
@@ -38,6 +46,7 @@ const App = () => {
         types={types}
         selectedType={selectedType} onTypeSelected={setSelectedType}
         entities={entities} onEntitySelected={setSelectedEntity}
+        onNewEntity={newEntity}
       />
       {(!selectedType || !selectedEntity) ? (
         <Layout className={s.emptyLayout}>
@@ -48,11 +57,11 @@ const App = () => {
         </Layout>
       ) : (
         <EntitySheet
-          key={selectedType.keyFor(selectedEntity)}
+          key={selectedEntity.key}
           type={selectedType}
           initialValue={selectedEntity}
-          onUpdate={
-            (updated: Entity) => updateEntity(selectedType, updated)
+          onSave={
+            (updated: Entity) => saveEntity(selectedType, updated)
           }
         />
       )}

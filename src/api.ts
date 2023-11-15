@@ -18,7 +18,9 @@ export class Api {
         code
         name
         titleFormat { title subtitle }
-        fields { code name placeholder type identifier hidden }
+        fields {
+          code name placeholder type identifier hidden mandatory generated
+        }
       }
     }`, { signal })
     return r.entityTypes.map((m: any) => new EntityMeta(m))
@@ -35,7 +37,21 @@ export class Api {
         entities(entityType: $entityType)
       }
     `, { variables: { entityType: entityType.code }, signal })
-    return r.entities.map((entity: any) => entityType.validateEntity(entity))
+    return r.entities.map((fields: any) => entityType.wrapFields(fields))
+  }
+
+  /**
+   * Creates an `entity` of a paticular `entityType` with the given data.
+   */
+  async createEntity({ entityType, entity, signal }: {
+    entityType: EntityMeta, entity: Entity, signal?: AbortSignal,
+  }): Promise<Entity> {
+    const r = await this.request(`
+      mutation ($code: String, $data: JSONObject) {
+        entityCreate(entityTypeCode: $code, data: $data)
+      }
+    `, { variables: { code: entityType.code, data: entity.fields }, signal })
+    return entityType.validateEntity(entityType.wrapFields(r.entityCreate))
   }
 
   /**
@@ -51,8 +67,8 @@ export class Api {
       mutation ($code: String, $data: JSONObject) {
         entityUpdate(entityTypeCode: $code, data: $data)
       }
-    `, { variables: { code: entityType.code, data: entity }, signal })
-    return entityType.validateEntity(r.entityUpdate)
+    `, { variables: { code: entityType.code, data: entity.fields }, signal })
+    return entityType.validateEntity(entityType.wrapFields(r.entityUpdate))
   }
 
   /**
