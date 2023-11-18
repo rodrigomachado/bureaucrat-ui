@@ -7,7 +7,7 @@ import { useState } from 'react'
 const SetterSymbol = Symbol('RibSetter')
 const rootPath = 'RIB'
 
-export function useRib<T>(initialValue: any): T {
+export function useRib<T>(initialValue: T): T {
   const [state, stateSetter] = useState(initialValue)
   return createRib(state, stateSetter)
 }
