@@ -14,7 +14,7 @@ import { Sheet } from '../layout/Sheet'
 import { Tooltip } from '../layout/Tooltip'
 import { FormField, useForm } from '../lib/form'
 import { useKeyboardShortcut } from '../lib/keyboardShortcuts'
-import { useNotification } from '../lib/notification'
+import { useNotification, useDialogs } from '../lib/notification'
 
 import s from './EntitySheet.css'
 
@@ -27,10 +27,12 @@ type EntitySheetProps = {
 }
 const EntitySheet = ({ type, initialValue, onSave }: EntitySheetProps) => {
   const notify = useNotification()
+  const dialogs = useDialogs()
   useKeyboardShortcut([{ meta: true, key: 's' }], () => doSave())
   const form = useForm(
     Object.keys(type.fields), initialValue.fields, type.formRules,
   )
+  const entityTitle = type.formatTitle(form.values).title
 
   const doSave = async () => {
     if (form.pristine) return
@@ -56,6 +58,14 @@ const EntitySheet = ({ type, initialValue, onSave }: EntitySheetProps) => {
     })
   }
 
+  const doDelete = async () => {
+    if (!await dialogs.confirm({
+      title: `Delete ${entityTitle}`,
+      content: `Confirm deletion of ${entityTitle}?`,
+    })) return
+    // TODO WIP Delete on API and refresh
+  }
+
   // Show all fields when creating a new entity
   const formFields = initialValue.new ?
     Object.values(type.fields) :
@@ -63,7 +73,7 @@ const EntitySheet = ({ type, initialValue, onSave }: EntitySheetProps) => {
 
   return (
     <Sheet className={s.root}>
-      <Header title={type.formatTitle(form.values).title}>
+      <Header title={entityTitle}>
         <Space.Compact block>
           <Tooltip title='Save' shortcut='⌘ + S'>
             <Button
@@ -72,7 +82,13 @@ const EntitySheet = ({ type, initialValue, onSave }: EntitySheetProps) => {
               onClick={doSave}
             />
           </Tooltip>
-          <Tooltip title='Delete'><Button icon={<DeleteFilled />} /></Tooltip>
+          <Tooltip title='Delete'>
+            <Button
+              icon={<DeleteFilled />}
+              disabled={initialValue.new}
+              onClick={doDelete}
+            />
+          </Tooltip>
         </Space.Compact>
         <Space.Compact block>
           <Tooltip title='Config'><Button icon={<SettingFilled />} /></Tooltip>
