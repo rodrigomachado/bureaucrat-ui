@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-import { Entity, EntityMeta } from './entity'
+import { Entity, EntityFields, EntityMeta } from './entity'
 import { useErrorEmitter } from './lib/error'
 
 /**
@@ -61,14 +61,30 @@ export class Api {
     entityType, entity, signal,
   }: {
     entityType: EntityMeta, entity: Entity, signal?: AbortSignal,
-  },
-  ): Promise<Entity> {
+  }): Promise<Entity> {
     const r = await this.request(`
       mutation ($code: String, $data: JSONObject) {
         entityUpdate(entityTypeCode: $code, data: $data)
       }
     `, { variables: { code: entityType.code, data: entity.fields }, signal })
     return entityType.validateEntity(entityType.wrapFields(r.entityUpdate))
+  }
+
+  /**
+   * Deletes an `entity` of a particular `entityType`.
+   * The `entity` to be deleted is identified by an idenfier object containing
+   * the values for every identifier field of the entity type.
+   */
+  async deleteEntity({
+    entityType, entityId, signal,
+  }: {
+    entityType: EntityMeta, entityId: EntityFields, signal?: AbortSignal,
+  }): Promise<void> {
+    await this.request(`
+      mutation ($code: String, $id: JSONObject) {
+        entityDelete(entityTypeCode: $code, id: $id)
+      }
+    `, { variables: { code: entityType.code, id: entityId }, signal })
   }
 
   /**

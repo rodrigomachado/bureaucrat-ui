@@ -87,6 +87,16 @@ export class EntityMeta {
     return JSON.stringify(ids.length === 1 ? ids[0] : ids)
   }
 
+  idFor(entityFields: EntityFields): EntityFields {
+    return Object
+      .values(this.fields)
+      .filter(f => f.identifier)
+      .reduce((acc, f) => {
+        acc[f.code] = entityFields[f.code]
+        return acc
+      }, {} as EntityFields)
+  }
+
   formatTitle(data: EntityFields): EntityTitle {
     return {
       title: formatTitlePattern(this, data, this.titleFormat.title),

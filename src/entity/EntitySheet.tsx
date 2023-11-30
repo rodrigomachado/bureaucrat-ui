@@ -24,8 +24,11 @@ type EntitySheetProps = {
   type: EntityMeta,
   initialValue: Entity,
   onSave: (entity: Entity) => Promise<void>,
+  onDelete: (entity: Entity) => Promise<void>,
 }
-const EntitySheet = ({ type, initialValue, onSave }: EntitySheetProps) => {
+const EntitySheet = ({
+  type, initialValue, onSave, onDelete,
+}: EntitySheetProps) => {
   const notify = useNotification()
   const dialogs = useDialogs()
   useKeyboardShortcut([{ meta: true, key: 's' }], () => doSave())
@@ -38,12 +41,10 @@ const EntitySheet = ({ type, initialValue, onSave }: EntitySheetProps) => {
     if (form.pristine) return
     form.touch()
 
-    const title = type.formatTitle(form.values).title
-
     if (!form.valuesOk) {
       notify.error({
         message: 'Oops... Not able to save.',
-        description: `${title} contains errors.`,
+        description: `${entityTitle} contains errors.`,
       })
       return
     }
@@ -54,7 +55,7 @@ const EntitySheet = ({ type, initialValue, onSave }: EntitySheetProps) => {
     })
     notify.success({
       message: 'Saved!',
-      description: `${title} saved successfully.`,
+      description: `${entityTitle} saved successfully.`,
     })
   }
 
@@ -63,7 +64,12 @@ const EntitySheet = ({ type, initialValue, onSave }: EntitySheetProps) => {
       title: `Delete ${entityTitle}`,
       content: `Confirm deletion of ${entityTitle}?`,
     })) return
-    // TODO WIP Delete on API and refresh
+
+    await onDelete(initialValue)
+    notify.success({
+      message: 'Deleted!',
+      description: `${entityTitle} deleted successfully.`,
+    })
   }
 
   // Show all fields when creating a new entity

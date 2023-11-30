@@ -36,6 +36,15 @@ const App = () => {
     setSelectedEntity(saved)
   }
 
+  const deleteEntity = async (type: EntityMeta, entity: Entity) => {
+    await api.deleteEntity({
+      entityType: type,
+      entityId: type.idFor(entity.fields),
+    })
+    await entities.reload()
+    setSelectedEntity(null)
+  }
+
   const newEntity = selectedType && (() => {
     setSelectedEntity(selectedType.createEntity())
   })
@@ -62,6 +71,9 @@ const App = () => {
           initialValue={selectedEntity}
           onSave={
             (updated: Entity) => saveEntity(selectedType, updated)
+          }
+          onDelete={
+            (entity: Entity) => deleteEntity(selectedType, entity)
           }
         />
       )}
