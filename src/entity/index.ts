@@ -1,1 +1,1 @@
-export { Entity, EntityMeta } from './entity'
+export { Entity, EntityMeta, EntityFields } from './entity'
