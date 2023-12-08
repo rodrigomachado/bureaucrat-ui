@@ -48,7 +48,11 @@ const EntityList = ({
         </Tooltip>
         <Tooltip title='Search'><Button icon={<FilterFilled />} /></Tooltip>
         <Tooltip title='Reload'>
-          <Button icon={<ReloadOutlined />} onClick={entities.reload} />
+          <Button
+            icon={<ReloadOutlined />}
+            onClick={entities.reload}
+            disabled={entities.loading}
+          />
         </Tooltip>
       </Space.Compact>
     </Header>
@@ -120,7 +124,7 @@ function LoadedSuccessfully({
   if (error) return (<Empty />)
   if (!type) return (<Empty />)
 
-  if (loading) return (
+  if (loading && !data) return (
     <List itemLayout='horizontal'>
       <List.Item>
         <Skeleton active avatar={{ shape: 'circle' }} paragraph={false} />
